@@ -1,4 +1,5 @@
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
 namespace Console_Project
 {
@@ -9,13 +10,15 @@ namespace Console_Project
         public int VertexBufferObject { get; private set; }
         public int VertexArrayObject { get; private set; }
         public int ElementBufferObject { get; private set; }
-        public Shader Shader { get; private set; }
+        public ShaderController ShaderController { get; private set; }
 
-        public OpenGLDrawFigure(Figure figure, Shader shader)
+        public OpenGLDrawFigure(Figure figure, ShaderController shaderController)
         {
             Figure = figure;
             ElementBufferObject = NotInitializatedElementBufferObjectValue;
-            Shader = shader;
+            ShaderController = shaderController;
+            Figure.OnTransformStarted += OnTransformStarted!;
+            Figure.OnTransformCompleted += OnTransformCompleted!;
         }
 
         /// <summary>
@@ -41,12 +44,12 @@ namespace Console_Project
             GL.BindVertexArray(VertexArrayObject);
 
             GL.VertexAttribPointer(
-                Shader.GetAttribLocation("pos0"),
+                ShaderController.Shader.GetAttribLocation("pos0"),
                 Core.Vec3AttributeSize,
                 VertexAttribPointerType.Float,
                 false,
                 // Because we are draw triangles => 3 verteces
-                3 * sizeof(float),
+                Core.Vec3AttributeSize * sizeof(float),
                 0
             );
             GL.EnableVertexAttribArray(0);
@@ -60,7 +63,7 @@ namespace Console_Project
                 bufferUsageHint
             );
 
-            Shader.Use();
+            ShaderController.Shader.Use();
         }
 
         /// <summary>
@@ -70,11 +73,14 @@ namespace Console_Project
         {
             if (ElementBufferObject == NotInitializatedElementBufferObjectValue)
             {
-                throw new Exception("Trying to draw not initializated figure");
+                return;
             }
 
-            Shader.Use();
+            ShaderController.Shader.Use();
             GL.BindVertexArray(VertexArrayObject);
+
+            ShaderController.Calculate();
+
             GL.DrawElements(
                 PrimitiveType.Triangles,
                 Figure.Indices.Length,
@@ -83,20 +89,29 @@ namespace Console_Project
             );
         }
 
-        public void Dispose()
+        private void OnTransformStarted(object sender, EventArgs e)
         {
+            Dispose();
+        }
+
+        private void OnTransformCompleted(object sender, EventArgs e)
+        {
+            Init();
+        }
+
+        public void Dispose(bool IsDisposeShader = false)
+        {
+            ElementBufferObject = NotInitializatedElementBufferObjectValue;
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindVertexArray(0);
             GL.DeleteBuffer(VertexBufferObject);
             GL.DeleteBuffer(ElementBufferObject);
             GL.DeleteVertexArray(VertexArrayObject);
-            Shader.Dispose();
-            ElementBufferObject = NotInitializatedElementBufferObjectValue;
         }
 
         ~OpenGLDrawFigure()
         {
-            Dispose();
+            Dispose(true);
         }
     }
 }

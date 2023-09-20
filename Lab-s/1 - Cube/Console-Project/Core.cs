@@ -1,4 +1,5 @@
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 
@@ -7,8 +8,9 @@ namespace Console_Project
     public class Core : GameWindow
     {
         public readonly static int Vec3AttributeSize = 3;
-        readonly OpenGLDrawFigure figure;
-        readonly Shader shader;
+        OpenGLDrawFigure figure;
+        Shader shader;
+        Matrix4 rotationMatrixByAxisZ = Matrix4.CreateFromAxisAngle(Vector3.UnitZ, 0.1f);
 
         public Core(
             string title,
@@ -27,8 +29,10 @@ namespace Console_Project
                 }
             )
         {
-            shader = new Shader("shader.vert", "shader.frag");
-            figure = new OpenGLDrawFigure(Figure.TestTriangle, shader);
+            shader = Shader.GetSimpleOneColorShader(0.5f, 0.8f, 0.6f, 1.0f);
+            // TODO: Check OpenTK lessons solution in another folder about uniform and projection
+            ShaderController shaderController = new(shader);
+            figure = new OpenGLDrawFigure(Figure.TestSquare2, shaderController);
         }
 
         protected override void OnLoad()
@@ -41,12 +45,13 @@ namespace Console_Project
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             base.OnUpdateFrame(args);
+            // figure.Figure.Transform(rotationMatrixByAxisZ);
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             base.OnRenderFrame(args);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             figure.Draw();
 
