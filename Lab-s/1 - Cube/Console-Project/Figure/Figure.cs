@@ -7,7 +7,8 @@ namespace Console_Project
         public Vector3[] Vertices { get; private set; }
         public float[] VerticesCoordinates { get; private set; }
         public uint[] Indices { get; private set; }
-        public event EventHandler? OnTransform;
+        public event EventHandler? OnTransformStarted;
+        public event EventHandler? OnTransformCompleted;
 
         public Figure(Vector3[] vertices, uint[] indices)
         {
@@ -25,19 +26,22 @@ namespace Console_Project
             }
         }
 
-        void Transform(Matrix4 transformMatrix)
+        public void Transform(Matrix4 transformMatrix)
         {
-            Parallel.ForEach(
-                Vertices,
-                vertex =>
+            OnTransformStarted?.Invoke(this, EventArgs.Empty);
+
+            Parallel.For(
+                0,
+                Vertices.Length,
+                i =>
                 {
-                    var v = new Vector4(vertex, 1) * transformMatrix;
+                    var v = new Vector4(Vertices[i], 1) * transformMatrix;
                     var w = v.W;
-                    vertex = new Vector3(v / w);
+                    Vertices[i] = new Vector3(v / w);
                 }
             );
 
-            OnTransform?.Invoke(this, EventArgs.Empty);
+            OnTransformCompleted?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -79,5 +83,6 @@ namespace Console_Project
             );
 
         public static Figure TestSquare => Figure.CreateSquare(Vector3.Zero, 1f);
+        public static Figure TestSquare2 => Figure.CreateSquare(new Vector3(0f, 0f, -1f), 1f);
     }
 }
