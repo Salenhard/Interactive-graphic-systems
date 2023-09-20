@@ -4,102 +4,85 @@ namespace Console_Project
 {
     public class Shader
     {
-        public int Handle;
-        private bool disposedValue = false;
-    
-        public Shader(string vertexPath, string fragmentPath)
+        public static string ShaderDirectory = "./Shaders/";
+        int vertexShader,
+            fragmentShader,
+            programHandler;
+
+        public Shader(string vertexShaderName, string fragmentShaderName)
         {
-            // These are the handles to the individual shaders.
-            int VertexShader;
-            int FragmentShader;
+            string vertexShaderSource = File.ReadAllText(
+                Path.Combine(ShaderDirectory, vertexShaderName)
+            );
+            string fragmentShaderSource = File.ReadAllText(
+                Path.Combine(ShaderDirectory, fragmentShaderName)
+            );
 
-            // Load the source code from the individual shader files.
-            string VertexShaderSource = File.ReadAllText(vertexPath);
-            string FragmentShaderSource = File.ReadAllText(fragmentPath);
+            vertexShader = GL.CreateShader(ShaderType.VertexShader);
+            GL.ShaderSource(vertexShader, vertexShaderSource);
 
-            // Generate our shaders, and bind the source code to the shaders.
-            VertexShader = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource(VertexShader, VertexShaderSource);
+            fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
+            GL.ShaderSource(fragmentShader, fragmentShaderSource);
 
-            FragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource(FragmentShader, FragmentShaderSource);
+            CompileShader(vertexShader);
+            CompileShader(fragmentShader);
 
-            // Compile the shaders
-            GL.CompileShader(VertexShader);
+            programHandler = GL.CreateProgram();
+            GL.AttachShader(programHandler, vertexShader);
+            GL.AttachShader(programHandler, fragmentShader);
+            GL.LinkProgram(programHandler);
 
-            // Check for errors
-            GL.GetShader(VertexShader, ShaderParameter.CompileStatus, out int success1);
-            if (success1 == 0)
-            {
-                string infoLog = GL.GetShaderInfoLog(VertexShader);
-                Console.WriteLine(infoLog);
-            }
+            LinkProgram(programHandler);
 
-            // Compile the shaders
-            GL.CompileShader(FragmentShader);
-
-            // Check for errors
-            GL.GetShader(FragmentShader, ShaderParameter.CompileStatus, out int success2);
-            if (success2 == 0)
-            {
-                string infoLog = GL.GetShaderInfoLog(FragmentShader);
-                Console.WriteLine(infoLog);
-            }
-
-            // Link them together into a program that can be run on the GPU
-            Handle = GL.CreateProgram();
-
-            GL.AttachShader(Handle, VertexShader);
-            GL.AttachShader(Handle, FragmentShader);
-
-            GL.LinkProgram(Handle);
-
-            // check for the errors
-            GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out int success3);
-            if (success3 == 0)
-            {
-                string infoLog = GL.GetProgramInfoLog(Handle);
-                Console.WriteLine(infoLog);
-            }
-
-            // Cleanup
-            GL.DetachShader(Handle, VertexShader);
-            GL.DetachShader(Handle, FragmentShader);
-            GL.DeleteShader(FragmentShader);
-            GL.DeleteShader(VertexShader);
+            Clear();
         }
 
         public void Use()
         {
-            GL.UseProgram(Handle);
+            GL.UseProgram(programHandler);
         }
 
-
-        protected virtual void Dispose(bool disposing)
+        public void CompileShader(int shader)
         {
-            if (!disposedValue)
+            GL.CompileShader(shader);
+            GL.GetShader(shader, ShaderParameter.CompileStatus, out int success);
+            if (success == 0)
             {
-                GL.DeleteProgram(Handle);
-
-                disposedValue = true;
+                Console.WriteLine(GL.GetShaderInfoLog(shader));
             }
+        }
+
+        public void LinkProgram(int programHandler)
+        {
+            GL.GetProgram(programHandler, GetProgramParameterName.LinkStatus, out int success);
+            if (success == 0)
+            {
+                Console.WriteLine(GL.GetProgramInfoLog(programHandler));
+            }
+        }
+
+        void Clear()
+        {
+            GL.DetachShader(programHandler, vertexShader);
+            GL.DetachShader(programHandler, fragmentShader);
+            GL.DeleteShader(vertexShader);
+            GL.DeleteShader(fragmentShader);
+        }
+
+        public int GetAttribLocation(string attribName)
+        {
+            return GL.GetAttribLocation(programHandler, attribName);
+        }
+
+        public void Dispose()
+        {
+            GL.DeleteProgram(programHandler);
+            GC.SuppressFinalize(this);
         }
 
         ~Shader()
         {
-            if (disposedValue == false)
-            {
-                Console.WriteLine("GPU Resource leak! Did you forget to call Dispose()?");
-            }
+            Dispose();
         }
-
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-
     }
 }
