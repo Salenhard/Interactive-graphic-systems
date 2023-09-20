@@ -5,13 +5,13 @@ namespace Console_Project
     public class OpenGLDrawFigure
     {
         public static readonly int NotInitializatedElementBufferObjectValue = -72;
-        public IFigure Figure { get; private set; }
+        public Figure Figure { get; private set; }
         public int VertexBufferObject { get; private set; }
         public int VertexArrayObject { get; private set; }
         public int ElementBufferObject { get; private set; }
         public Shader Shader { get; private set; }
 
-        public OpenGLDrawFigure(IFigure figure, Shader shader)
+        public OpenGLDrawFigure(Figure figure, Shader shader)
         {
             Figure = figure;
             ElementBufferObject = NotInitializatedElementBufferObjectValue;
@@ -24,7 +24,7 @@ namespace Console_Project
         /// <returns> Genarated buffer </returns>
         public void Init(BufferUsageHint bufferUsageHint = BufferUsageHint.DynamicDraw)
         {
-            var vertices = Figure.Vertices;
+            var vertices = Figure.VerticesCoordinates;
             var indices = Figure.Indices;
 
             VertexBufferObject = GL.GenBuffer();
@@ -45,8 +45,8 @@ namespace Console_Project
                 Core.Vec3AttributeSize,
                 VertexAttribPointerType.Float,
                 false,
-                // Because we ara draw triangles!
-                Triangle.VerticesCount * sizeof(float),
+                // Because we are draw triangles => 3 verteces
+                3 * sizeof(float),
                 0
             );
             GL.EnableVertexAttribArray(0);

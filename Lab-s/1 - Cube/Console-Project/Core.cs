@@ -28,7 +28,7 @@ namespace Console_Project
             )
         {
             shader = new Shader("shader.vert", "shader.frag");
-            figure = new OpenGLDrawFigure(Square.TestSquare, shader);
+            figure = new OpenGLDrawFigure(Figure.TestTriangle, shader);
         }
 
         protected override void OnLoad()
