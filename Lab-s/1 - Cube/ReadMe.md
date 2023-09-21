@@ -6,6 +6,7 @@
 - Cube should leave a dissolving trail
 ## Helpful links:
 - **OpenGL:**
+  - [OpenTK good tutorial](https://www.youtube.com/playlist?list=PLSlpr6o9vURyxd-keTeGLXy980pF7boki)
   - [OpenTK official guide](https://opentk.net/learn/index.html)
   - [WebGL. Программирование трехмерной графики (VK)](https://vk.com/wall-18822808_25495)
   - [Game programming for serious game creation](https://vk.com/wall89375127_1270)
