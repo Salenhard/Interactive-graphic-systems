@@ -7,8 +7,6 @@ namespace Console_Project
         public Vector3[] Vertices { get; private set; }
         public float[] VerticesCoordinates { get; private set; }
         public uint[] Indices { get; private set; }
-        public event EventHandler? OnTransformStarted;
-        public event EventHandler? OnTransformCompleted;
 
         public Figure(Vector3[] vertices, uint[] indices)
         {
@@ -28,8 +26,6 @@ namespace Console_Project
 
         public void Transform(Matrix4 transformMatrix)
         {
-            OnTransformStarted?.Invoke(this, EventArgs.Empty);
-
             Parallel.For(
                 0,
                 Vertices.Length,
@@ -40,8 +36,6 @@ namespace Console_Project
                     Vertices[i] = new Vector3(v / w);
                 }
             );
-
-            OnTransformCompleted?.Invoke(this, EventArgs.Empty);
         }
     }
 
