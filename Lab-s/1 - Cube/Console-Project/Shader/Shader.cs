@@ -1,41 +1,40 @@
 using System.Reflection.Metadata;
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL;
 
 namespace Console_Project
 {
-    public partial class Shader
+    public class Shader
     {
-        readonly int VertexShader,
-            FragmentShader;
+        public static readonly string ShaderSourcesPath = "./Data/Shaders/";
+
         public readonly int ShaderProgramHandler;
 
-        public Shader(string vertexShaderSource, string fragmentShaderSource)
+        public Shader(string vertexShaderSourceFilePath, string fragmentShaderSourceFilePath)
         {
-            VertexShader = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource(VertexShader, vertexShaderSource);
+            // TODO: Fix error: gl_Position is not accessible in this profile
+            var vertexShaderSource = File.ReadAllText(vertexShaderSourceFilePath);
+            var fragmentShaderSource = File.ReadAllText(vertexShaderSourceFilePath);
 
-            FragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource(FragmentShader, fragmentShaderSource);
+            var vertexShader = GL.CreateShader(ShaderType.VertexShader);
+            GL.ShaderSource(vertexShader, vertexShaderSource);
 
-            CompileShader(VertexShader);
-            CompileShader(FragmentShader);
+            var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
+            GL.ShaderSource(fragmentShader, fragmentShaderSource);
+
+            CompileShader(vertexShader);
+            CompileShader(fragmentShader);
 
             ShaderProgramHandler = GL.CreateProgram();
-            GL.AttachShader(ShaderProgramHandler, VertexShader);
-            GL.AttachShader(ShaderProgramHandler, FragmentShader);
+            GL.AttachShader(ShaderProgramHandler, vertexShader);
+            GL.AttachShader(ShaderProgramHandler, fragmentShader);
             GL.LinkProgram(ShaderProgramHandler);
 
             LinkProgram(ShaderProgramHandler);
 
-            Clear();
+            Clear(vertexShader, fragmentShader);
         }
 
-        public void Use()
-        {
-            GL.UseProgram(ShaderProgramHandler);
-        }
-
-        public void CompileShader(int shader)
+        static void CompileShader(int shader)
         {
             GL.CompileShader(shader);
             GL.GetShader(shader, ShaderParameter.CompileStatus, out int success);
@@ -45,7 +44,7 @@ namespace Console_Project
             }
         }
 
-        public void LinkProgram(int programHandler)
+        static void LinkProgram(int programHandler)
         {
             GL.GetProgram(programHandler, GetProgramParameterName.LinkStatus, out int success);
             if (success == 0)
@@ -54,12 +53,12 @@ namespace Console_Project
             }
         }
 
-        void Clear()
+        void Clear(int vertexShader, int fragmentShader)
         {
-            GL.DetachShader(ShaderProgramHandler, VertexShader);
-            GL.DetachShader(ShaderProgramHandler, FragmentShader);
-            GL.DeleteShader(VertexShader);
-            GL.DeleteShader(FragmentShader);
+            GL.DetachShader(ShaderProgramHandler, vertexShader);
+            GL.DetachShader(ShaderProgramHandler, fragmentShader);
+            GL.DeleteShader(vertexShader);
+            GL.DeleteShader(fragmentShader);
         }
 
         public int GetAttribLocation(string attribName)
@@ -76,82 +75,6 @@ namespace Console_Project
         ~Shader()
         {
             Dispose();
-        }
-    }
-
-    public partial class Shader
-    {
-        private static readonly string nl = System.Environment.NewLine;
-
-        public static Shader GetSimpleOneColorShader(
-            float red,
-            float green,
-            float blue,
-            float transparency
-        )
-        {
-            var variableName = "pos0";
-            var v =
-                "#version 330 core"
-                + nl
-                + $"layout (location = 0) in vec3 {variableName};"
-                + nl
-                + "void main()"
-                + nl
-                + "{"
-                + nl
-                + $"gl_Position = vec4({variableName}, 1.0);"
-                + nl
-                + "}"
-                + nl;
-            var f =
-                "#version 330 core"
-                + nl
-                + "out vec4 FragColor;"
-                + nl
-                + "void main()"
-                + nl
-                + "{"
-                + nl
-                + $"FragColor = vec4({F2S(red)}f, {F2S(green)}f, {F2S(blue)}f, {F2S(transparency)}f);"
-                + nl
-                + "}"
-                + nl;
-
-            // System.Console.WriteLine(v);
-            // System.Console.WriteLine(f);
-
-            return new(v, f);
-        }
-
-        private static string F2S(float f)
-        {
-            return f.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        }
-
-        /// <summary>
-        /// Work In Process
-        /// </summary>
-        public static Shader GetSimpleOneTexturedShader()
-        {
-            var pos0 = "pos0";
-            // var pos1 = "pos1";
-            var v =
-                "#version 330 core\n"
-                + $"layout (location = 0) in vec3 {pos0};\n"
-                + "void main()\n"
-                + "{\n"
-                + $"gl_Position = vec4({pos0}, 1.0);\n"
-                + "}\n";
-            var f =
-                "#version 330 core\n"
-                + "out vec4 FragColor;\n"
-                + "void main()\n"
-                + "{\n"
-                + $"FragColor = vec4(0.5f, 0.5f, 0.5f, 1f);"
-                + "}\n";
-
-            return new(v, f);
         }
     }
 }
