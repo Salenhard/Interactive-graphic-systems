@@ -1,4 +1,4 @@
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -7,10 +7,8 @@ namespace Console_Project
 {
     public class Core : GameWindow
     {
-        public readonly static int Vec3AttributeSize = 3;
-        OpenGLDrawFigure figure;
+        GameObject gameObject;
         Shader shader;
-        Matrix4 rotationMatrixByAxisZ = Matrix4.CreateFromAxisAngle(Vector3.UnitZ, 0.1f);
 
         public Core(
             string title,
@@ -29,17 +27,20 @@ namespace Console_Project
                 }
             )
         {
-            shader = Shader.GetSimpleOneColorShader(0.5f, 0.8f, 0.6f, 1.0f);
+            shader = new(
+                Path.Combine(Shader.ShaderSourcesPath, "shader.vert"),
+                Path.Combine(Shader.ShaderSourcesPath, "shader.frag")
+            );
             // TODO: Check OpenTK lessons solution in another folder about uniform and projection
-            ShaderController shaderController = new(shader);
-            figure = new OpenGLDrawFigure(Figure.TestSquare2, shaderController);
+            gameObject = new GameObject(Figure.TestSquare2, shader.ShaderProgramHandler);
+            CenterWindow();
         }
 
         protected override void OnLoad()
         {
             base.OnLoad();
             GL.ClearColor(.1f, .1f, .15f, 1f);
-            figure.Init();
+            gameObject.Init();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -53,15 +54,21 @@ namespace Console_Project
             base.OnRenderFrame(args);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            figure.Draw();
+            gameObject.Draw();
 
             SwapBuffers();
         }
 
         protected override void OnUnload()
         {
-            figure.Dispose();
+            gameObject.Dispose();
             base.OnUnload();
+        }
+
+        protected override void OnResize(ResizeEventArgs e)
+        {
+            base.OnResize(e);
+            GL.Viewport(0, 0, e.Width, e.Height);
         }
     }
 }
