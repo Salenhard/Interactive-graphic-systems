@@ -26,7 +26,7 @@ namespace Console_Project
         /// <summary>
         /// Generating buffer from figure as ElementBufferObject and binding that buffer
         /// </summary>
-        /// <returns> Genarated buffer </returns>
+        /// <returns> Generated buffer </returns>
         public void Init(BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw)
         {
             var vertices = Figure.VerticesCoordinates;
@@ -36,11 +36,6 @@ namespace Console_Project
                 vertices,
                 bufferUsageHint
             );
-
-            ElementBufferHandler = OpenGLExtensions.CreateEBO(indices, bufferUsageHint);
-
-            GL.UseProgram(ShaderProgrammHandler);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
         /// <summary>
@@ -56,16 +51,6 @@ namespace Console_Project
                 DrawElementsType.UnsignedInt,
                 0
             );
-        }
-
-        private void OnTransformStarted(object sender, EventArgs e)
-        {
-            Dispose();
-        }
-
-        private void OnTransformCompleted(object sender, EventArgs e)
-        {
-            Init();
         }
 
         public void Dispose(bool IsDisposeShader = false)
