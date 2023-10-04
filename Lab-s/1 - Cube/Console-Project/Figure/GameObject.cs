@@ -17,6 +17,12 @@ namespace Console_Project
             ShaderProgrammHandler = shaderProgrammHandler;
         }
 
+        public GameObject(Figure figure)
+        {
+            Figure = figure;
+            ShaderProgrammHandler = Shader.Default.ShaderProgramHandler;
+        }
+
         /// <summary>
         /// Generating buffer from figure as ElementBufferObject and binding that buffer
         /// </summary>
