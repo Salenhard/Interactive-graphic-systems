@@ -13,7 +13,7 @@ namespace Console_Project
         {
             // TODO: Fix error: gl_Position is not accessible in this profile
             var vertexShaderSource = File.ReadAllText(vertexShaderSourceFilePath);
-            var fragmentShaderSource = File.ReadAllText(vertexShaderSourceFilePath);
+            var fragmentShaderSource = File.ReadAllText(fragmentShaderSourceFilePath);
 
             var vertexShader = GL.CreateShader(ShaderType.VertexShader);
             GL.ShaderSource(vertexShader, vertexShaderSource);
@@ -76,5 +76,11 @@ namespace Console_Project
         {
             Dispose();
         }
+
+        public static Shader Default =
+            new(
+                Path.Combine(Shader.ShaderSourcesPath, "shader.vert"),
+                Path.Combine(Shader.ShaderSourcesPath, "shader.frag")
+            );
     }
 }
