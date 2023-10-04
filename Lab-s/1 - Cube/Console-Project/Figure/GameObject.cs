@@ -11,31 +11,35 @@ namespace Console_Project
             ElementBufferHandler,
             ShaderProgrammHandler;
 
-        public GameObject(Figure figure, int shaderProgrammHandler)
+        public GameObject(
+            Figure figure,
+            int shaderProgrammHandler,
+            BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw
+        )
         {
             Figure = figure;
             ShaderProgrammHandler = shaderProgrammHandler;
+            Init(bufferUsageHint);
         }
 
-        public GameObject(Figure figure)
+        public GameObject(
+            Figure figure,
+            BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw
+        )
         {
             Figure = figure;
             ShaderProgrammHandler = Shader.Default.ShaderProgramHandler;
+            Init(bufferUsageHint);
         }
 
         /// <summary>
         /// Generating buffer from figure as ElementBufferObject and binding that buffer
         /// </summary>
-        /// <returns> Generated buffer </returns>
+        /// <returns> Genarated buffer </returns>
         public void Init(BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw)
         {
-            var vertices = Figure.VerticesCoordinates;
-            var indices = Figure.Indices;
-
-            (VertexBufferHandler, VertexArrayHandler) = OpenGLExtensions.CreateVBOandVAO(
-                vertices,
-                bufferUsageHint
-            );
+            (VertexBufferHandler, VertexArrayHandler, ElementBufferHandler) =
+                Figure.GetAllHandlers();
         }
 
         /// <summary>

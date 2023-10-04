@@ -8,7 +8,6 @@ namespace Console_Project
     public class Core : GameWindow
     {
         GameObject gameObject;
-        Shader shader;
 
         public Core(
             string title,
@@ -27,12 +26,7 @@ namespace Console_Project
                 }
             )
         {
-            shader = new(
-                Path.Combine(Shader.ShaderSourcesPath, "shader.vert"),
-                Path.Combine(Shader.ShaderSourcesPath, "shader.frag")
-            );
-            // TODO: Check OpenTK lessons solution in another folder about uniform and projection
-            gameObject = new GameObject(Figure.TestSquare2, shader.ShaderProgramHandler);
+            gameObject = Figure.TestSquare2.ToGameObject();
             CenterWindow();
         }
 
@@ -40,13 +34,11 @@ namespace Console_Project
         {
             base.OnLoad();
             GL.ClearColor(.1f, .1f, .15f, 1f);
-            gameObject.Init();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             base.OnUpdateFrame(args);
-            // figure.Figure.Transform(rotationMatrixByAxisZ);
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
