@@ -8,17 +8,13 @@ namespace Console_Project
 
         public readonly int ShaderProgramHandler;
 
-        public ShaderProgram(string vertexShaderSourceFilePath, string fragmentShaderSourceFilePath)
+        public ShaderProgram(string vertexShaderCode, string fragmentShaderCode)
         {
-            // TODO: Fix error: gl_Position is not accessible in this profile
-            var vertexShaderSource = File.ReadAllText(vertexShaderSourceFilePath);
-            var fragmentShaderSource = File.ReadAllText(fragmentShaderSourceFilePath);
-
             var vertexShader = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource(vertexShader, vertexShaderSource);
+            GL.ShaderSource(vertexShader, vertexShaderCode);
 
             var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource(fragmentShader, fragmentShaderSource);
+            GL.ShaderSource(fragmentShader, fragmentShaderCode);
 
             CompileShader(vertexShader);
             CompileShader(fragmentShader);
@@ -76,10 +72,24 @@ namespace Console_Project
             Dispose();
         }
 
-        public static ShaderProgram Default =
-            new(
-                Path.Combine(ShaderProgram.ShaderSourcesPath, "shader.vert"),
-                Path.Combine(ShaderProgram.ShaderSourcesPath, "shader.frag")
-            );
+        public static ShaderProgram FromFile(
+            string vertexShaderSourceFilePath,
+            string fragmentShaderSourceFilePath
+        )
+        {
+            var vertexShaderCode = File.ReadAllText(vertexShaderSourceFilePath);
+            var fragmentShaderCode = File.ReadAllText(fragmentShaderSourceFilePath);
+
+            return new(vertexShaderCode, fragmentShaderCode);
+        }
+
+        public static ShaderProgram Default = FromFile(
+            Path.Combine(ShaderProgram.ShaderSourcesPath, "shader.vert"),
+            Path.Combine(ShaderProgram.ShaderSourcesPath, "shader.frag")
+        );
+        // new(
+        //     Path.Combine(ShaderProgram.ShaderSourcesPath, "shader.vert"),
+        //     Path.Combine(ShaderProgram.ShaderSourcesPath, "shader.frag")
+        // );
     }
 }
