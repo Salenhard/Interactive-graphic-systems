@@ -72,7 +72,7 @@ namespace Console_Project
             Dispose();
         }
 
-        public static ShaderProgram FromFile(
+        public static ShaderProgram FromFiles(
             string vertexShaderSourceFilePath,
             string fragmentShaderSourceFilePath
         )
@@ -83,13 +83,7 @@ namespace Console_Project
             return new(vertexShaderCode, fragmentShaderCode);
         }
 
-        public static ShaderProgram Default = FromFile(
-            Path.Combine(ShaderProgram.ShaderSourcesPath, "shader.vert"),
-            Path.Combine(ShaderProgram.ShaderSourcesPath, "shader.frag")
-        );
-        // new(
-        //     Path.Combine(ShaderProgram.ShaderSourcesPath, "shader.vert"),
-        //     Path.Combine(ShaderProgram.ShaderSourcesPath, "shader.frag")
-        // );
+        public static ShaderProgram Default =
+            new(ShaderDefinitions.VertexShaderDefault, ShaderDefinitions.FragmentShaderDefault);
     }
 }
