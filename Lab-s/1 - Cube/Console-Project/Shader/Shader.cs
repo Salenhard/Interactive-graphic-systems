@@ -2,13 +2,13 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Console_Project
 {
-    public class Shader
+    public class ShaderProgram
     {
         public static readonly string ShaderSourcesPath = "./Data/Shaders/";
 
         public readonly int ShaderProgramHandler;
 
-        public Shader(string vertexShaderSourceFilePath, string fragmentShaderSourceFilePath)
+        public ShaderProgram(string vertexShaderSourceFilePath, string fragmentShaderSourceFilePath)
         {
             // TODO: Fix error: gl_Position is not accessible in this profile
             var vertexShaderSource = File.ReadAllText(vertexShaderSourceFilePath);
@@ -71,15 +71,15 @@ namespace Console_Project
             GC.SuppressFinalize(this);
         }
 
-        ~Shader()
+        ~ShaderProgram()
         {
             Dispose();
         }
 
-        public static Shader Default =
+        public static ShaderProgram Default =
             new(
-                Path.Combine(Shader.ShaderSourcesPath, "shader.vert"),
-                Path.Combine(Shader.ShaderSourcesPath, "shader.frag")
+                Path.Combine(ShaderProgram.ShaderSourcesPath, "shader.vert"),
+                Path.Combine(ShaderProgram.ShaderSourcesPath, "shader.frag")
             );
     }
 }
