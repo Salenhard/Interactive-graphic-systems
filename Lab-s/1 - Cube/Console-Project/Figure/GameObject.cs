@@ -5,7 +5,7 @@ namespace Console_Project
 {
     public class GameObject
     {
-        readonly Figure Figure;
+        Figure Figure;
         int VertexBufferHandler,
             VertexArrayHandler,
             ElementBufferHandler,
@@ -28,7 +28,7 @@ namespace Console_Project
         )
         {
             Figure = figure;
-            ShaderProgrammHandler = Shader.Default.ShaderProgramHandler;
+            ShaderProgrammHandler = ShaderProgram.Default.ShaderProgramHandler;
             Init(bufferUsageHint);
         }
 
