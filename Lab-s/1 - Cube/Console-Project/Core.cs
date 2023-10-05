@@ -49,6 +49,8 @@ namespace Console_Project
             gameObject.Draw();
 
             SwapBuffers();
+
+            // GL.ClearColor(.5f, .1f, .15f, 1f);
         }
 
         protected override void OnUnload()
