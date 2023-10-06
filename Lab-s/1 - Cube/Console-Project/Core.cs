@@ -1,5 +1,4 @@
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 
@@ -7,7 +6,7 @@ namespace Console_Project
 {
     public class Core : GameWindow
     {
-        GameObject gameObject;
+        GameObjectsController gameObjectsController;
 
         public Core(
             string title,
@@ -26,7 +25,8 @@ namespace Console_Project
                 }
             )
         {
-            gameObject = Figure.TestSquare2.ToGameObject();
+            gameObjectsController = new(Figure.TestCube.ToGameObject());
+
             CenterWindow();
         }
 
@@ -46,16 +46,14 @@ namespace Console_Project
             base.OnRenderFrame(args);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            gameObject.Draw();
+            gameObjectsController.Draw();
 
             SwapBuffers();
-
-            // GL.ClearColor(.5f, .1f, .15f, 1f);
         }
 
         protected override void OnUnload()
         {
-            gameObject.Dispose();
+            gameObjectsController.Dispose();
             base.OnUnload();
         }
 
