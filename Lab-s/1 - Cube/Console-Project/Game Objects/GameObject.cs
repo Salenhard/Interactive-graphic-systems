@@ -8,8 +8,7 @@ namespace Console_Project
         Figure Figure;
         int VertexBufferHandler,
             VertexArrayHandler,
-            ElementBufferHandler,
-            ShaderProgrammHandler;
+            ElementBufferHandler;
 
         public GameObject(
             Figure figure,
@@ -18,7 +17,6 @@ namespace Console_Project
         )
         {
             Figure = figure;
-            ShaderProgrammHandler = shaderProgrammHandler;
             Init(bufferUsageHint);
         }
 
@@ -28,7 +26,6 @@ namespace Console_Project
         )
         {
             Figure = figure;
-            ShaderProgrammHandler = ShaderProgram.Default.ShaderProgramHandler;
             Init(bufferUsageHint);
         }
 
@@ -47,7 +44,6 @@ namespace Console_Project
         /// </summary>
         public void Draw()
         {
-            GL.UseProgram(ShaderProgrammHandler);
             GL.BindVertexArray(VertexArrayHandler);
             GL.DrawElements(
                 PrimitiveType.Triangles,
