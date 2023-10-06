@@ -51,7 +51,7 @@ namespace Console_Project
             GL.GetProgram(programHandler, GetProgramParameterName.LinkStatus, out int success);
             if (success == 0)
             {
-                Console.WriteLine(GL.GetProgramInfoLog(programHandler));
+                throw new Exception(GL.GetProgramInfoLog(programHandler));
             }
         }
 
@@ -67,6 +67,49 @@ namespace Console_Project
         {
             GL.DeleteProgram(ShaderProgramHandler);
             GC.SuppressFinalize(this);
+        }
+
+        public void SetUniform(string name, dynamic value)
+        {
+            if (value is null)
+            {
+                throw new NullReferenceException(nameof(value));
+            }
+            else if (ShaderUniforms.Length < 1)
+            {
+                throw new IndexOutOfRangeException(nameof(ShaderUniforms));
+            }
+            else if (!ShaderUniforms.Where(x => x.Name == name).Any())
+            {
+                throw new ArgumentException(null, nameof(name));
+            }
+
+            var (location, type) = ShaderUniforms
+                .Where(x => x.Name == name)
+                .Select(x => (x.Location, x.Type))
+                .First();
+
+            if (type != value.GetType())
+            {
+                throw new ArgumentException(null, nameof(value));
+            }
+
+            switch (type)
+            {
+                case ActiveUniformType.FloatMat4:
+                    GL.Uniform3(location, value);
+                    break;
+
+                case ActiveUniformType.FloatVec3:
+                    GL.UniformMatrix4(location, true, value);
+                    break;
+
+                default:
+                    throw new ArgumentException(
+                        "Sorry, I don't added support for this value type yet...",
+                        nameof(type)
+                    );
+            }
         }
 
         ~ShaderProgram()
