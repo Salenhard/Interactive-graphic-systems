@@ -25,6 +25,22 @@ namespace Console_Project
         }}
         ";
 
+        public static string UniformVertexShader =>
+            $@"
+        #version 420
+
+        in vec3 {VertexAttribute.Position.Name};
+
+        uniform mat4 model;
+        uniform mat4 view;
+        uniform mat4 projection;
+
+        void main(void)
+        {{
+            gl_Position = vec4({VertexAttribute.Position.Name}, 1.0) * model * view * projection;
+        }}
+        ";
+
         public static readonly string VertexShaderDefault =
             $@"
         #version 420
@@ -38,18 +54,6 @@ namespace Console_Project
         ";
 
         public static readonly string FragmentShaderDefault =
-            $@"
-        #version 420
-
-        out vec4 fragmentColor;
-
-        void main(void)
-        {{
-            fragmentColor = vec4(0.3, 0.6, 0.5, 1.0);
-        }}
-        ";
-
-        public static readonly string FragmentShaderPerspectiveDefault =
             $@"
         #version 420
 
@@ -93,6 +97,49 @@ namespace Console_Project
         void main(void)
         {{
             fragColor = vec4(random(gl_FragCoord.xy), random(gl_FragCoord.yz), random(gl_FragCoord.zx), 1.0);
+        }}
+        ";
+
+        public static string UniformFragmentShader =>
+            $@"
+        #version 420
+
+        out vec4 fragColor;
+
+        uniform vec3 iColor;
+
+        void main(void)
+        {{
+            fragColor = (iColor, 1.0);
+        }}
+        ";
+
+        public static string UniformHoverFragmentShader =>
+            $@"
+        #version 420
+
+        out vec4 fragColor;
+
+        uniform vec3 iColor;
+        uniform vec3 iHoverColor;
+        uniform vec2 iMouseCoordinates;
+        uniform vec2 iLeftTopHoverCoord;
+        uniform vec2 iRightBottomHoverCoord;
+
+        void main(void)
+        {{       
+            vec3 color = iColor;
+
+            if (
+                iMouseCoordinates.x >= iLeftTopHoverCoord.x 
+                && iMouseCoordinates.x <= iRightBottomHoverCoord.x
+                && iMouseCoordinates.y >= iLeftTopHoverCoord.y 
+                && iMouseCoordinates.y <= iRightBottomHoverCoord.y)
+            {{
+                color = iHoverColor;
+            }}
+
+            fragColor = (color, 1.0);
         }}
         ";
     }
