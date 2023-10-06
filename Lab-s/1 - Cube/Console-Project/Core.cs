@@ -1,17 +1,21 @@
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Mathematics;
 
 namespace Console_Project
 {
     public class Core : GameWindow
     {
-        GameObjectsController gameObjectsController;
+        List<GameObjectsController> gameObjectsControllers = new();
+
+        public const int WIDTH = 800;
+        public const int HEIGHT = 640;
 
         public Core(
             string title,
-            int width = 800,
-            int height = 640,
+            int width = WIDTH,
+            int height = HEIGHT,
             VSyncMode vSyncMode = VSyncMode.On
         )
             : base(
@@ -25,7 +29,22 @@ namespace Console_Project
                 }
             )
         {
-            gameObjectsController = new(Figure.TestCube.ToGameObject());
+            gameObjectsControllers.Add(
+                new(
+                    ShaderProgram.PerspectiveSimple.ShaderProgramHandler,
+                    Figure.TestCube2.ToGameObject()
+                )
+            );
+
+            gameObjectsControllers.Add(
+                new(
+                    ShaderProgram.Default.ShaderProgramHandler,
+                    Figure.CreateSquare(new(-.4f, -.4f, 0.0f), .3f).ToGameObject(),
+                    Figure.CreateSquare(new(-.4f, +.4f, 0.0f), .3f).ToGameObject(),
+                    Figure.CreateSquare(new(+.4f, -.4f, 0.0f), .3f).ToGameObject(),
+                    Figure.CreateSquare(new(+.4f, +.4f, 0.0f), .3f).ToGameObject()
+                )
+            );
 
             CenterWindow();
         }
@@ -46,14 +65,20 @@ namespace Console_Project
             base.OnRenderFrame(args);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            gameObjectsController.Draw();
+            foreach (var item in gameObjectsControllers)
+            {
+                item.Draw();
+            }
 
             SwapBuffers();
         }
 
         protected override void OnUnload()
         {
-            gameObjectsController.Dispose();
+            foreach (var item in gameObjectsControllers)
+            {
+                item.Dispose();
+            }
             base.OnUnload();
         }
 

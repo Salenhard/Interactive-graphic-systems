@@ -1,12 +1,16 @@
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace Console_Project
 {
-    public class ShaderProgram
+    public partial class ShaderProgram
     {
         public static readonly string ShaderSourcesPath = "./Data/Shaders/";
 
         public readonly int ShaderProgramHandler;
+
+        public readonly ShaderUniform[] ShaderUniforms;
+        public readonly ShaderAttribute[] ShaderAttributes;
 
         public ShaderProgram(string vertexShaderCode, string fragmentShaderCode)
         {
@@ -25,6 +29,9 @@ namespace Console_Project
             GL.LinkProgram(ShaderProgramHandler);
 
             LinkProgram(ShaderProgramHandler);
+
+            ShaderAttributes = GetAttributeArray(ShaderProgramHandler);
+            ShaderUniforms = GetUniformArray(ShaderProgramHandler);
 
             Clear(vertexShader, fragmentShader);
         }
@@ -56,11 +63,6 @@ namespace Console_Project
             GL.DeleteShader(fragmentShader);
         }
 
-        public int GetAttribLocation(string attribName)
-        {
-            return GL.GetAttribLocation(ShaderProgramHandler, attribName);
-        }
-
         public void Dispose()
         {
             GL.DeleteProgram(ShaderProgramHandler);
@@ -82,8 +84,86 @@ namespace Console_Project
 
             return new(vertexShaderCode, fragmentShaderCode);
         }
+    }
 
-        public static ShaderProgram Default =
+    public partial class ShaderProgram
+    {
+        public static readonly ShaderProgram Default =
             new(ShaderDefinitions.VertexShaderDefault, ShaderDefinitions.FragmentShaderDefault);
+
+        public static readonly ShaderProgram Noise =
+            new(ShaderDefinitions.VertexShaderDefault, ShaderDefinitions.FragmentNoise);
+
+        public static readonly ShaderProgram NoiseColored =
+            new(ShaderDefinitions.VertexShaderDefault, ShaderDefinitions.FragmentNoiseColored);
+
+        public static readonly ShaderProgram PerspectiveSimple =
+            new(
+                ShaderDefinitions.GetPerspectiveVertexShader(
+                    Matrix4.Identity,
+                    Matrix4.CreateTranslation(0.0f, 0.0f, 0.0f),
+                    Matrix4.CreatePerspectiveFieldOfView(
+                        MathHelper.DegreesToRadians(90.0f),
+                        Core.WIDTH / Core.HEIGHT,
+                        1.0f,
+                        10.0f
+                    )
+                ),
+                ShaderDefinitions.FragmentShaderDefault
+            );
+
+        public static ShaderUniform[] GetUniformArray(int shaderProgramHandler)
+        {
+            GL.GetProgram(
+                shaderProgramHandler,
+                GetProgramParameterName.ActiveUniforms,
+                out int uniformCount
+            );
+            var uniforms = new ShaderUniform[uniformCount];
+
+            for (int i = 0; i < uniformCount; i++)
+            {
+                GL.GetActiveUniform(
+                    shaderProgramHandler,
+                    i,
+                    256,
+                    out _,
+                    out _,
+                    out var type,
+                    out var name
+                );
+                var location = GL.GetUniformLocation(shaderProgramHandler, name);
+                uniforms[i] = new ShaderUniform(name, location, type);
+            }
+
+            return uniforms;
+        }
+
+        public static ShaderAttribute[] GetAttributeArray(int shaderProgramHandler)
+        {
+            GL.GetProgram(
+                shaderProgramHandler,
+                GetProgramParameterName.ActiveAttributes,
+                out int attributeCount
+            );
+            var attributes = new ShaderAttribute[attributeCount];
+
+            for (int i = 0; i < attributeCount; i++)
+            {
+                GL.GetActiveAttrib(
+                    shaderProgramHandler,
+                    i,
+                    256,
+                    out _,
+                    out _,
+                    out var type,
+                    out var name
+                );
+                var location = GL.GetAttribLocation(shaderProgramHandler, name);
+                attributes[i] = new ShaderAttribute(name, location, type);
+            }
+
+            return attributes;
+        }
     }
 }
