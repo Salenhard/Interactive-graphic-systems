@@ -23,20 +23,6 @@ namespace Console_Project
                 j++;
             }
         }
-
-        public void Transform(Matrix4 transformMatrix)
-        {
-            Parallel.For(
-                0,
-                Vertices.Length,
-                i =>
-                {
-                    var v = new Vector4(Vertices[i], 1) * transformMatrix;
-                    var w = v.W;
-                    Vertices[i] = new Vector3(v / w);
-                }
-            );
-        }
     }
 
     // Creation figure methods
@@ -64,6 +50,71 @@ namespace Console_Project
 
             return new Figure(vertices, new uint[] { 0, 1, 2, 2, 3, 0 });
         }
+
+        public static Figure CreateCube(Vector3 centerPoint, float sideLength)
+        {
+            var h = sideLength / 2f;
+
+            var x = centerPoint.X;
+            var y = centerPoint.Y;
+            var z = centerPoint.Z;
+
+            Vector3[] vertices =
+            {
+                // A1..A4
+                new(x - h, y + h, z - h),
+                new(x - h, y + h, z + h),
+                new(x + h, y + h, z + h),
+                new(x + h, y + h, z - h),
+                // B1..B4
+                new(x - h, y - h, z - h),
+                new(x - h, y - h, z + h),
+                new(x + h, y - h, z + h),
+                new(x + h, y - h, z - h),
+            };
+
+            uint[] indices =
+            {
+                0,
+                1,
+                2,
+                2,
+                3,
+                0,
+                0,
+                1,
+                5,
+                5,
+                4,
+                0,
+                0,
+                3,
+                7,
+                7,
+                4,
+                0,
+                6,
+                7,
+                3,
+                3,
+                2,
+                6,
+                6,
+                5,
+                4,
+                4,
+                7,
+                6,
+                6,
+                2,
+                1,
+                1,
+                5,
+                6,
+            };
+
+            return new(vertices, indices);
+        }
     }
 
     // Test instances
@@ -77,6 +128,7 @@ namespace Console_Project
             );
 
         public static Figure TestSquare => Figure.CreateSquare(Vector3.Zero, 1f);
-        public static Figure TestSquare2 => Figure.CreateSquare(new Vector3(0f, 0f, -1f), 1f);
+        public static Figure TestSquare2 => Figure.CreateSquare(new(0f, 0f, -1f), 1f);
+        public static Figure TestCube => Figure.CreateCube(new(0f, 0f, -1f), 1f);
     }
 }
