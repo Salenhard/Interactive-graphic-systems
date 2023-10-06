@@ -59,6 +59,9 @@ namespace Console_Project
             return (vbo, vao, ebo);
         }
 
-        public static GameObject ToGameObject(this Figure figure) => new(figure);
+        public static GameObject ToGameObject(
+            this Figure figure,
+            BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw
+        ) => new(figure, bufferUsageHint);
     };
 }
