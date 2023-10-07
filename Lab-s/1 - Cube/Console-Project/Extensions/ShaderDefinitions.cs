@@ -31,13 +31,13 @@ namespace Console_Project
 
         in vec3 {VertexAttribute.Position.Name};
 
-        uniform mat4 model;
-        uniform mat4 view;
-        uniform mat4 projection;
+        uniform mat4 iModel;
+        uniform mat4 iView;
+        uniform mat4 iProjection;
 
         void main(void)
         {{
-            gl_Position = vec4({VertexAttribute.Position.Name}, 1.0) * model * view * projection;
+            gl_Position = vec4({VertexAttribute.Position.Name}, 1.0) * iModel * iView * iProjection;
         }}
         ";
 
@@ -110,7 +110,7 @@ namespace Console_Project
 
         void main(void)
         {{
-            fragColor = (iColor, 1.0);
+            fragColor = vec4(iColor, 1.0);
         }}
         ";
 
