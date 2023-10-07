@@ -130,6 +130,6 @@ namespace Console_Project
         public static Figure TestSquare => Figure.CreateSquare(Vector3.Zero, 1f);
         public static Figure TestSquare2 => Figure.CreateSquare(new(0f, 0f, -1f), 1f);
         public static Figure TestCube => Figure.CreateCube(new(0f, 0f, -1f), 1f);
-        public static Figure TestCube2 => Figure.CreateCube(new(0f, 0f, -5f), 3f);
+        public static Figure TestCube2 => Figure.CreateCube(new(0f, 0f, 0f), 1f);
     }
 }
