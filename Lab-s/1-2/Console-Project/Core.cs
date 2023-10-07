@@ -17,7 +17,7 @@ namespace Console_Project
         readonly Dictionary<string, bool> boolValues = new();
         readonly Dictionary<string, int> intValues = new();
         readonly System.Diagnostics.Stopwatch timer = System.Diagnostics.Stopwatch.StartNew();
-        ShaderProgram mainShader;
+        readonly ShaderProgram mainShader;
 
         public Core(
             string title,
