@@ -12,8 +12,6 @@ namespace Console_Project
         public const int WIDTH = 800;
         public const int HEIGHT = 640;
 
-        float test = 0f;
-
         public Core(
             string title,
             int width = WIDTH,
@@ -33,31 +31,37 @@ namespace Console_Project
         {
             ShaderProgram temp = ShaderProgram.PerspectiveUniform;
 
-            Test(temp);
+            InitShaderUniforms(temp);
 
             gameObjectsControllers.Add(new(temp, Figure.TestCube2.ToGameObject()));
 
             CenterWindow();
         }
 
-        void Test(ShaderProgram shaderProgram)
+        void InitShaderUniforms(ShaderProgram shaderProgram)
         {
-            shaderProgram.SetUniform("iColor", new Vector3(.5f, .5f, .5f));
+            shaderProgram.SetUniform(
+                "iColor",
+                (new Vector3(.5f, .5f, .5f), ActiveUniformType.FloatVec3)
+            );
             shaderProgram.SetUniform(
                 "iModel",
-                Matrix4.CreateTranslation(0f, 0f, -5f) * Matrix4.CreateRotationZ(test)
+                (Matrix4.CreateTranslation(0f, 0f, -5f), ActiveUniformType.FloatMat4)
             );
-
-            test += .01f;
-
-            shaderProgram.SetUniform("iView", Matrix4.CreateTranslation(0f, 0f, 0f));
+            shaderProgram.SetUniform(
+                "iView",
+                (Matrix4.CreateTranslation(0f, 0f, 0f), ActiveUniformType.FloatMat4)
+            );
             shaderProgram.SetUniform(
                 "iProjection",
-                Matrix4.CreatePerspectiveFieldOfView(
-                    MathHelper.DegreesToRadians(45f),
-                    1f * WIDTH / HEIGHT,
-                    1f,
-                    10f
+                (
+                    Matrix4.CreatePerspectiveFieldOfView(
+                        MathHelper.DegreesToRadians(45f),
+                        1f * WIDTH / HEIGHT,
+                        1f,
+                        10f
+                    ),
+                    ActiveUniformType.FloatMat4
                 )
             );
         }
@@ -73,7 +77,10 @@ namespace Console_Project
             base.OnUpdateFrame(args);
             CheckInputs();
 
-            Test(gameObjectsControllers[0].ShaderProgram);
+            foreach (var item in gameObjectsControllers)
+            {
+                item.Update();
+            }
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -104,7 +111,7 @@ namespace Console_Project
             GL.Viewport(0, 0, e.Width, e.Height);
         }
 
-        async void CheckInputs()
+        void CheckInputs()
         {
             if (MouseState.IsAnyButtonDown)
             {
