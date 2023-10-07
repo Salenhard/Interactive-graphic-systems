@@ -1,4 +1,3 @@
-using System.Data.SqlTypes;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
@@ -9,7 +8,6 @@ namespace Console_Project
         public static readonly string ShaderSourcesPath = "./Data/Shaders/";
 
         public readonly int ShaderProgramHandler;
-
         public readonly ShaderUniform[] ShaderUniforms;
         public readonly ShaderAttribute[] ShaderAttributes;
         public readonly Dictionary<
@@ -98,10 +96,7 @@ namespace Console_Project
                 throw new ArgumentException(null, nameof(name));
             }
 
-            var location = ShaderUniforms
-                .Where(x => x.Name == name)
-                .Select(x => (x.Location))
-                .First();
+            var location = ShaderUniforms.Where(x => x.Name == name).First().Location;
 
             var (value, type) = (valueInfo.value, valueInfo.type);
 
@@ -115,10 +110,17 @@ namespace Console_Project
                     var mat4 = (Matrix4)value;
                     GL.UniformMatrix4(location, true, ref mat4);
                     break;
+                case ActiveUniformType.FloatVec2:
+                    var v2 = (Vector2)value;
+                    GL.Uniform2(location, ref v2);
+                    break;
+                case ActiveUniformType.Float:
+                    var f = (float)value;
+                    GL.Uniform1(location, f);
+                    break;
                 default:
-                    throw new ArgumentException(
-                        "We can not handle this type yet. Add hander",
-                        nameof(type)
+                    throw new NotImplementedException(
+                        $"Class can not handle this type ({nameof(type)}) yet. Add hander"
                     );
             }
 
@@ -163,8 +165,6 @@ namespace Console_Project
         public static readonly ShaderProgram PerspectiveSimple =
             new(
                 ShaderDefinitions.GetPerspectiveVertexShader(
-                    Matrix4.Identity,
-                    Matrix4.CreateTranslation(0.0f, 0.0f, 0.0f),
                     Matrix4.CreatePerspectiveFieldOfView(
                         MathHelper.DegreesToRadians(90.0f),
                         Core.WIDTH / Core.HEIGHT,
