@@ -30,6 +30,11 @@ namespace Console_Project
             ShaderProgram = shaderProgramHandler;
         }
 
+        public void Update()
+        {
+            ShaderProgram.SetSettedUniforms();
+        }
+
         public void Draw()
         {
             GL.UseProgram(ShaderProgram.ShaderProgramHandler);
