@@ -4,6 +4,13 @@ namespace Console_Project
 {
     static class MathExtension
     {
+        public const float SmallStep = 0.001f,
+            MediumStep = 0.004f,
+            BigStep = 0.01f,
+            KiloStep = 0.08f,
+            MegaStep = 0.24f,
+            GigaStep = 0.72f;
+
         public static string ToFormattedString(this float number) =>
             number.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
 
