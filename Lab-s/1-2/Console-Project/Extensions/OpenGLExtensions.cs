@@ -33,19 +33,18 @@ namespace Console_Project
             );
 
             var vao = GL.GenVertexArray();
-            // TODO: [0] Why this zero? What's that means?
-            var zero = 0;
+            // NOTE: As we use only position in vertex shader
+            var positionAttributeIndex = VertexAttribute.Position.Index;
             GL.BindVertexArray(vao);
             GL.VertexAttribPointer(
-                zero,
+                positionAttributeIndex,
                 Ver3AttributeSize,
                 VertexAttribPointerType.Float,
                 false,
                 vertexStride * sizeof(float),
-                0
+                VertexAttribute.Position.Offset
             );
-            // TODO: [0] ...
-            GL.EnableVertexAttribArray(zero);
+            GL.EnableVertexAttribArray(positionAttributeIndex);
 
             var ebo = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
