@@ -11,6 +11,7 @@ namespace Console_Project
 
         public readonly ShaderUniform[] ShaderUniforms;
         public readonly ShaderAttribute[] ShaderAttributes;
+        public readonly Dictionary<string, dynamic> ShaderUniformValues;
 
         public ShaderProgram(string vertexShaderCode, string fragmentShaderCode)
         {
@@ -32,6 +33,7 @@ namespace Console_Project
 
             ShaderAttributes = GetAttributeArray(ShaderProgramHandler);
             ShaderUniforms = GetUniformArray(ShaderProgramHandler);
+            ShaderUniformValues = new(ShaderUniforms.Length);
 
             Clear(vertexShader, fragmentShader);
         }
@@ -67,6 +69,14 @@ namespace Console_Project
         {
             GL.DeleteProgram(ShaderProgramHandler);
             GC.SuppressFinalize(this);
+        }
+
+        public void SetSettedUniforms()
+        {
+            foreach (var settedUniform in ShaderUniformValues)
+            {
+                // TODO: do this function
+            }
         }
 
         public void SetUniform(string name, Vector3 value)
