@@ -69,13 +69,9 @@ namespace Console_Project
             GC.SuppressFinalize(this);
         }
 
-        public void SetUniform(string name, dynamic value)
+        public void SetUniform(string name, Vector3 value)
         {
-            if (value is null)
-            {
-                throw new NullReferenceException(nameof(value));
-            }
-            else if (ShaderUniforms.Length < 1)
+            if (ShaderUniforms.Length < 1)
             {
                 throw new IndexOutOfRangeException(nameof(ShaderUniforms));
             }
@@ -84,32 +80,31 @@ namespace Console_Project
                 throw new ArgumentException(null, nameof(name));
             }
 
-            var (location, type) = ShaderUniforms
+            var location = ShaderUniforms
                 .Where(x => x.Name == name)
-                .Select(x => (x.Location, x.Type))
+                .Select(x => (x.Location))
                 .First();
 
-            if (type != value.GetType())
+            GL.Uniform3(location, ref value);
+        }
+
+        public void SetUniform(string name, Matrix4 value)
+        {
+            if (ShaderUniforms.Length < 1)
             {
-                throw new ArgumentException(null, nameof(value));
+                throw new IndexOutOfRangeException(nameof(ShaderUniforms));
+            }
+            else if (!ShaderUniforms.Where(x => x.Name == name).Any())
+            {
+                throw new ArgumentException(null, nameof(name));
             }
 
-            switch (type)
-            {
-                case ActiveUniformType.FloatMat4:
-                    GL.Uniform3(location, value);
-                    break;
+            var location = ShaderUniforms
+                .Where(x => x.Name == name)
+                .Select(x => (x.Location))
+                .First();
 
-                case ActiveUniformType.FloatVec3:
-                    GL.UniformMatrix4(location, true, value);
-                    break;
-
-                default:
-                    throw new ArgumentException(
-                        "Sorry, I don't added support for this value type yet...",
-                        nameof(type)
-                    );
-            }
+            GL.UniformMatrix4(location, true, ref value);
         }
 
         ~ShaderProgram()
@@ -154,6 +149,9 @@ namespace Console_Project
                 ),
                 ShaderDefinitions.FragmentShaderDefault
             );
+
+        public static ShaderProgram PerspectiveUniform =>
+            new(ShaderDefinitions.UniformVertexShader, ShaderDefinitions.UniformFragmentShader);
 
         public static ShaderUniform[] GetUniformArray(int shaderProgramHandler)
         {
