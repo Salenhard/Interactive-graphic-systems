@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Gwen.Renderer.OpenTK" Version="3.0.6001.430" />
     <PackageReference Include="OpenTK" Version="4.8.0" />
   </ItemGroup>
 
