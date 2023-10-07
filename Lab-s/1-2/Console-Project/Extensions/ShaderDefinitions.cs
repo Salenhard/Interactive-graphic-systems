@@ -5,23 +5,17 @@ namespace Console_Project
 {
     class ShaderDefinitions
     {
-        public static string GetPerspectiveVertexShader(
-            Matrix4 model,
-            Matrix4 view,
-            Matrix4 projection
-        ) =>
+        public static string GetPerspectiveVertexShader(Matrix4 MVP) =>
             $@"
         #version 420
 
         in vec3 {VertexAttribute.Position.Name};
 
-        mat4 model = mat4({model.ToFormattedString()});
-        mat4 view = mat4({view.ToFormattedString()});
-        mat4 projection = mat4({projection.ToFormattedString()});
+        mat4 MVP = mat4({MVP.ToFormattedString()});
 
         void main(void)
         {{
-            gl_Position = vec4({VertexAttribute.Position.Name}, 1.0) * model * view * projection;
+            gl_Position = vec4({VertexAttribute.Position.Name}, 1.0) * MVP;
         }}
         ";
 
@@ -31,13 +25,21 @@ namespace Console_Project
 
         in vec3 {VertexAttribute.Position.Name};
 
-        uniform mat4 iModel;
-        uniform mat4 iView;
-        uniform mat4 iProjection;
+        uniform mat4 iMVP;
+        uniform mat4 iRotationX;
+        uniform mat4 iRotationY;
+        uniform mat4 iRotationZ;
+        uniform mat4 iScale;
 
         void main(void)
         {{
-            gl_Position = vec4({VertexAttribute.Position.Name}, 1.0) * iModel * iView * iProjection;
+            gl_Position = vec4({VertexAttribute.Position.Name}, 1.0) 
+                * iRotationX
+                * iRotationY
+                * iRotationZ
+                * iScale
+                * iMVP
+                ;
         }}
         ";
 
@@ -106,11 +108,16 @@ namespace Console_Project
 
         out vec4 fragColor;
 
-        uniform vec3 iColor;
+        uniform vec2 iResolution;
+        uniform float iTime;
 
         void main(void)
         {{
-            fragColor = vec4(iColor, 1.0);
+            vec2 uv = gl_FragCoord.xy / iResolution.xy;
+
+            vec3 col = 0.5 + 0.5 * cos(iTime + uv.xyx + vec3(0,2,4));
+
+            fragColor = vec4(col, 1.0);
         }}
         ";
 
