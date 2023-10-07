@@ -1,3 +1,4 @@
+using System.Data.SqlTypes;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
@@ -11,7 +12,10 @@ namespace Console_Project
 
         public readonly ShaderUniform[] ShaderUniforms;
         public readonly ShaderAttribute[] ShaderAttributes;
-        public readonly Dictionary<string, dynamic> ShaderUniformValues;
+        public readonly Dictionary<
+            string,
+            (dynamic Value, ActiveUniformType Type)
+        > ShaderUniformValues;
 
         public ShaderProgram(string vertexShaderCode, string fragmentShaderCode)
         {
@@ -75,11 +79,15 @@ namespace Console_Project
         {
             foreach (var settedUniform in ShaderUniformValues)
             {
-                // TODO: do this function
+                SetUniform(settedUniform.Key, settedUniform.Value);
             }
         }
 
-        public void SetUniform(string name, Vector3 value)
+        public void SetUniform(
+            string name,
+            (dynamic value, ActiveUniformType type) valueInfo,
+            bool isReplacedPreviusValue = false
+        )
         {
             if (ShaderUniforms.Length < 1)
             {
@@ -95,26 +103,33 @@ namespace Console_Project
                 .Select(x => (x.Location))
                 .First();
 
-            GL.Uniform3(location, ref value);
-        }
+            var (value, type) = (valueInfo.value, valueInfo.type);
 
-        public void SetUniform(string name, Matrix4 value)
-        {
-            if (ShaderUniforms.Length < 1)
+            switch (type)
             {
-                throw new IndexOutOfRangeException(nameof(ShaderUniforms));
+                case ActiveUniformType.FloatVec3:
+                    var v3 = (Vector3)value;
+                    GL.Uniform3(location, ref v3);
+                    break;
+                case ActiveUniformType.FloatMat4:
+                    var mat4 = (Matrix4)value;
+                    GL.UniformMatrix4(location, true, ref mat4);
+                    break;
+                default:
+                    throw new ArgumentException(
+                        "We can not handle this type yet. Add hander",
+                        nameof(type)
+                    );
             }
-            else if (!ShaderUniforms.Where(x => x.Name == name).Any())
+
+            if (!ShaderUniformValues.ContainsKey(name))
             {
-                throw new ArgumentException(null, nameof(name));
+                ShaderUniformValues.Add(name, valueInfo);
             }
-
-            var location = ShaderUniforms
-                .Where(x => x.Name == name)
-                .Select(x => (x.Location))
-                .First();
-
-            GL.UniformMatrix4(location, true, ref value);
+            else if (isReplacedPreviusValue)
+            {
+                ShaderUniformValues[name] = valueInfo;
+            }
         }
 
         ~ShaderProgram()
