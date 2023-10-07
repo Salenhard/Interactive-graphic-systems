@@ -42,10 +42,10 @@ namespace Console_Project
 
             var vertices = new Vector3[]
             {
-                new Vector3(x - h, y + h, z),
-                new Vector3(x + h, y + h, z),
-                new Vector3(x + h, y - h, z),
-                new Vector3(x - h, y - h, z)
+                new(x - h, y + h, z),
+                new(x + h, y + h, z),
+                new(x + h, y - h, z),
+                new(x - h, y - h, z)
             };
 
             return new Figure(vertices, new uint[] { 0, 1, 2, 2, 3, 0 });
