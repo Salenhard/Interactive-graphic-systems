@@ -5,7 +5,7 @@ namespace Console_Project
     class GameObjectsController
     {
         public List<GameObject> GameObjects = new();
-        public readonly int ShaderProgramHandler;
+        public readonly ShaderProgram ShaderProgram;
 
         public GameObjectsController(params GameObject[] gameObjects)
         {
@@ -14,22 +14,25 @@ namespace Console_Project
                 GameObjects.Add(gameObject);
             }
 
-            ShaderProgramHandler = ShaderProgram.Default.ShaderProgramHandler;
+            ShaderProgram = ShaderProgram.Default;
         }
 
-        public GameObjectsController(int shaderProgramHandler, params GameObject[] gameObjects)
+        public GameObjectsController(
+            ShaderProgram shaderProgramHandler,
+            params GameObject[] gameObjects
+        )
         {
             foreach (var gameObject in gameObjects)
             {
                 GameObjects.Add(gameObject);
             }
 
-            ShaderProgramHandler = shaderProgramHandler;
+            ShaderProgram = shaderProgramHandler;
         }
 
         public void Draw()
         {
-            GL.UseProgram(ShaderProgramHandler);
+            GL.UseProgram(ShaderProgram.ShaderProgramHandler);
 
             foreach (var gameObject in GameObjects)
             {
