@@ -6,7 +6,7 @@ using OpenTK.Mathematics;
 
 namespace Console_Project
 {
-    public class Core : GameWindow
+    public class GameCore : GameWindow
     {
         List<GameObjectsController> gameObjectsControllers = new();
 
@@ -19,7 +19,7 @@ namespace Console_Project
         readonly System.Diagnostics.Stopwatch timer = System.Diagnostics.Stopwatch.StartNew();
         readonly ShaderProgram mainShader;
 
-        public Core(
+        public GameCore(
             string title,
             int width = WIDTH,
             int height = HEIGHT,
