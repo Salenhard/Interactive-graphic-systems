@@ -6,9 +6,16 @@ namespace Console_Project
         public int StatesAmount { get; private set; }
         public bool IsLoopableStates { get; private set; }
 
-        public StateSystem(int statesAmount, bool isLoopableStates)
+        public StateSystem(int statesAmount, int startState = 0, bool isLoopableStates = false)
         {
-            CurrentState = 0;
+            if (startState >= statesAmount || startState < 0)
+            {
+                throw new IndexOutOfRangeException(
+                    $"{nameof(startState)} was out of states amount range"
+                );
+            }
+
+            CurrentState = startState;
             StatesAmount = statesAmount;
             IsLoopableStates = isLoopableStates;
         }
@@ -33,12 +40,18 @@ namespace Console_Project
 
             if (potentialState < 0)
             {
-                CurrentState = IsLoopableStates ? Math.Abs(potentialState % StatesAmount) : 0;
+                CurrentState = IsLoopableStates
+                    ? StatesAmount - Math.Abs(potentialState % StatesAmount)
+                    : 0;
             }
             else
             {
                 CurrentState = potentialState;
             }
         }
+
+        public void SetFirstState() => CurrentState = 0;
+
+        public void SetLastState() => CurrentState = StatesAmount - 1;
     }
 }
