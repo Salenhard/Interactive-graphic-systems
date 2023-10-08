@@ -167,7 +167,7 @@ namespace Console_Project
                 ShaderDefinitions.GetPerspectiveVertexShader(
                     Matrix4.CreatePerspectiveFieldOfView(
                         MathHelper.DegreesToRadians(90.0f),
-                        Core.WIDTH / Core.HEIGHT,
+                        GameCore.WIDTH / GameCore.HEIGHT,
                         1.0f,
                         10.0f
                     )
