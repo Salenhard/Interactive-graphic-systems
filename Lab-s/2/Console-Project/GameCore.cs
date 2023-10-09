@@ -14,7 +14,7 @@ namespace Console_Project
         #endregion
 
         #region Variables
-        List<GameObjectsController> gameObjectsControllers = new();
+        Dictionary<string, GameObjectsController> gameObjectsControllers = new();
         readonly Dictionary<string, float> floatValues = new();
         readonly Dictionary<string, bool> boolValues = new();
         readonly Dictionary<string, int> intValues = new();
@@ -49,12 +49,13 @@ namespace Console_Project
         protected override void OnLoad()
         {
             base.OnLoad();
-            GL.ClearColor(.1f, .1f, .15f, 1f);
+            GL.ClearColor(.5f, .6f, .6f, 1f);
 
-            floatValues.Add("rotSmall", 0f);
-            floatValues.Add("rotMedium", 0f);
-            boolValues.Add("RageMode", false);
-            intValues.Add("Score", 0);
+            floatValues.Add("RotationSlow", 0f);
+            floatValues.Add("RotationMedium", 0f);
+            floatValues.Add("Score", 1f);
+            floatValues.Add("ScoreDecreasing", 0.01f);
+            boolValues.Add("IsRageMode", false);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -71,7 +72,7 @@ namespace Console_Project
 
             foreach (var item in gameObjectsControllers)
             {
-                item.Draw();
+                item.Value.Draw();
             }
 
             SwapBuffers();
@@ -81,8 +82,9 @@ namespace Console_Project
         {
             foreach (var item in gameObjectsControllers)
             {
-                item.Dispose();
+                item.Value.Dispose();
             }
+
             base.OnUnload();
         }
 
@@ -109,33 +111,22 @@ namespace Console_Project
         void OnUpdate()
         {
             CheckInputs();
-            UpdateMainShaderValues(boolValues["RageMode"]);
+            UpdateMainShaderValues(boolValues["IsRageMode"]);
 
             foreach (var item in gameObjectsControllers)
             {
-                item.Update();
+                item.Value.Update();
             }
         }
 
         void Init()
         {
             mainShader = ShaderProgram.PerspectiveUniform;
-            InitShaderUniforms(mainShader);
 
-            gameObjectsControllers.Add(
-                new(mainShader, Figure.TestCube2.ToGameObject(BufferUsageHint.StreamDraw))
-            );
-
-            stateSystem = new StateSystem(3);
-        }
-        #endregion
-
-        #region Necessary logic function
-        void InitShaderUniforms(ShaderProgram shaderProgram)
-        {
-            shaderProgram.SetUniform(
-                "iMVP",
-                (
+            (string UniformName,
+                dynamic UniformValue, 
+                ActiveUniformType UniformType)[] mainShaderUniformValues = {
+                    ("iMVP",
                     Matrix4.CreateTranslation(0f, 0f, 0f)
                         * Matrix4.LookAt(new(0f, 0f, 5f), Vector3.Zero, Vector3.UnitY)
                         * Matrix4.CreatePerspectiveFieldOfView(
@@ -144,10 +135,52 @@ namespace Console_Project
                             1f,
                             10f
                         ),
-                    ActiveUniformType.FloatMat4
-                )
-            );
-            shaderProgram.SetUniform("iScale", (Matrix4.Identity, ActiveUniformType.FloatMat4));
+                    ActiveUniformType.FloatMat4),
+                    ("iScale", Matrix4.Identity, ActiveUniformType.FloatMat4)
+                };
+
+            (string UniformName,
+                dynamic UniformValue, 
+                ActiveUniformType UniformType)[] hintLooseDisplayShaderUniformValues = {
+                    ("iColor", new Vector4(0f, 1f, 0f, 0f), ActiveUniformType.FloatVec4)
+                };
+
+            (string UniformName,
+                dynamic UniformValue, 
+                ActiveUniformType UniformType)[] hintWinDisplayShaderUniformValues = {
+                    ("iColor", new Vector4(1f, 1f, 1f, 0f), ActiveUniformType.FloatVec4)
+                };
+
+            InitShaderUniforms(mainShader, mainShaderUniformValues);
+
+            gameObjectsControllers.Add("Main", new(mainShader, Figure.TestCube2.ToGameObject(BufferUsageHint.StreamDraw)));
+            gameObjectsControllers.Add("HintLooseDisplay", new(ShaderProgram.Colorable, 
+                Figure.CreateSquare(Vector3.Zero, 2f).ToGameObject()));
+            // gameObjectsControllers.Add("HintWinDisplay", new(ShaderProgram.Colorable, 
+            //     Figure.CreateSquare(Vector3.Zero, 2f).ToGameObject()));
+
+            InitShaderUniforms(gameObjectsControllers["HintLooseDisplay"].ShaderProgram, 
+                hintLooseDisplayShaderUniformValues);
+            // InitShaderUniforms(gameObjectsControllers["HintWinDisplay"].ShaderProgram, 
+            //     hintWinDisplayShaderUniformValues);
+            
+            stateSystem = new StateSystem(3);
+        }
+        #endregion
+
+        #region Necessary logic function
+        void InitShaderUniforms(ShaderProgram shaderProgram, (string UniformName, dynamic UniformValue, ActiveUniformType UniformType)[] uniformsInfo)
+        {
+            foreach (var uniformInfo in uniformsInfo)
+            {
+                shaderProgram.SetUniform(
+                    uniformInfo.UniformName,
+                    (
+                        uniformInfo.UniformValue,
+                        uniformInfo.UniformType
+                    )
+                );
+            }
         }
 
         void CheckInputs()
@@ -158,11 +191,11 @@ namespace Console_Project
             }
             if (MouseState.IsButtonPressed(MouseButton.Button2))
             {
-                boolValues["RageMode"] = true;
+                boolValues["IsRageMode"] = true;
             }
             if (MouseState.IsButtonReleased(MouseButton.Button2))
             {
-                boolValues["RageMode"] = false;
+                boolValues["IsRageMode"] = false;
             }
         }
 
@@ -170,6 +203,12 @@ namespace Console_Project
         {
             UpdateRotationValues(isRageMode);
             UpdateColorValues(isRageMode);
+            UpdateHintDisplayTransparancy();
+        }
+
+        void UpdateHintDisplayTransparancy()
+        {
+            
         }
 
         void UpdateRotationValues(bool isRageMode = false)
@@ -184,28 +223,28 @@ namespace Console_Project
 
             if (isRageMode)
             {
-                floatValues["rotSmall"] += MathExtension.BigStep;
-                floatValues["rotMedium"] += MathExtension.KiloStep;
+                floatValues["RotationSlow"] += MathExtension.BigStep;
+                floatValues["RotationMedium"] += MathExtension.KiloStep;
             }
             else
             {
-                floatValues["rotSmall"] += MathExtension.SmallStep;
-                floatValues["rotMedium"] += MathExtension.MediumStep;
+                floatValues["RotationSlow"] += MathExtension.SmallStep;
+                floatValues["RotationMedium"] += MathExtension.MediumStep;
             }
 
             mainShader.SetUniform(
                 "iRotationX",
-                (Matrix4.CreateRotationX(floatValues["rotMedium"]), ActiveUniformType.FloatMat4),
+                (Matrix4.CreateRotationX(floatValues["RotationMedium"]), ActiveUniformType.FloatMat4),
                 true
             );
             mainShader.SetUniform(
                 "iRotationY",
-                (Matrix4.CreateRotationY(floatValues["rotSmall"]), ActiveUniformType.FloatMat4),
+                (Matrix4.CreateRotationY(floatValues["RotationSlow"]), ActiveUniformType.FloatMat4),
                 true
             );
             mainShader.SetUniform(
                 "iRotationZ",
-                (Matrix4.CreateRotationY(floatValues["rotSmall"]), ActiveUniformType.FloatMat4),
+                (Matrix4.CreateRotationY(floatValues["RotationSlow"]), ActiveUniformType.FloatMat4),
                 true
             );
         }
