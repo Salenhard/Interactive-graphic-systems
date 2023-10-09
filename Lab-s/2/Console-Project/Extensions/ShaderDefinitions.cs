@@ -121,6 +121,19 @@ namespace Console_Project
         }}
         ";
 
+        public static string UniformColorableFragmentShader =>
+            $@"
+        #version 420
+
+        out vec4 fragColor;
+        uniform vec4 iColor;
+
+        void main(void)
+        {{
+            fragColor = iColor;
+        }}
+        ";
+
         public static string UniformHoverFragmentShader =>
             $@"
         #version 420
