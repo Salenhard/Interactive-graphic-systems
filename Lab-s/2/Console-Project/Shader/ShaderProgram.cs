@@ -118,6 +118,10 @@ namespace Console_Project
                     var f = (float)value;
                     GL.Uniform1(location, f);
                     break;
+                case ActiveUniformType.FloatVec4:
+                    var v4 = (Vector4)value;
+                    GL.Uniform4(location, ref v4);
+                    break;
                 default:
                     throw new NotImplementedException(
                         $"Class can not handle this type ({nameof(type)}) yet. Add hander"
@@ -177,7 +181,9 @@ namespace Console_Project
 
         public static ShaderProgram PerspectiveUniform =>
             new(ShaderDefinitions.UniformVertexShader, ShaderDefinitions.UniformFragmentShader);
-
+        public static ShaderProgram Colorable =>
+            new(ShaderDefinitions.VertexShaderDefault, ShaderDefinitions.UniformColorableFragmentShader);
+        
         public static ShaderUniform[] GetUniformArray(int shaderProgramHandler)
         {
             GL.GetProgram(
