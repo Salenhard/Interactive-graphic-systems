@@ -8,16 +8,20 @@ namespace Console_Project
 {
     public class GameCore : GameWindow
     {
-        List<GameObjectsController> gameObjectsControllers = new();
-
+        #region Constants
         public const int WIDTH = 800;
         public const int HEIGHT = 640;
+        #endregion
 
+        #region Variables
+        List<GameObjectsController> gameObjectsControllers = new();
         readonly Dictionary<string, float> floatValues = new();
         readonly Dictionary<string, bool> boolValues = new();
         readonly Dictionary<string, int> intValues = new();
         readonly System.Diagnostics.Stopwatch timer = System.Diagnostics.Stopwatch.StartNew();
-        readonly ShaderProgram mainShader;
+        ShaderProgram mainShader = null!;
+        StateSystem stateSystem = null!;
+        #endregion
 
         public GameCore(
             string title,
@@ -36,16 +40,12 @@ namespace Console_Project
                 }
             )
         {
-            mainShader = ShaderProgram.PerspectiveUniform;
-            InitShaderUniforms(mainShader);
-
-            gameObjectsControllers.Add(
-                new(mainShader, Figure.TestCube2.ToGameObject(BufferUsageHint.StreamDraw))
-            );
+            Init();
 
             CenterWindow();
         }
 
+        #region Overrides functions
         protected override void OnLoad()
         {
             base.OnLoad();
@@ -61,13 +61,7 @@ namespace Console_Project
         {
             base.OnUpdateFrame(args);
 
-            CheckInputs();
-            UpdateMainShaderValues(boolValues["RageMode"]);
-
-            foreach (var item in gameObjectsControllers)
-            {
-                item.Update();
-            }
+            OnUpdate();
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -109,23 +103,34 @@ namespace Console_Project
             );
             GL.Viewport(0, 0, e.Width, e.Height);
         }
+        #endregion
 
-        void CheckInputs()
+        #region Facade
+        void OnUpdate()
         {
-            if (MouseState.IsAnyButtonDown)
+            CheckInputs();
+            UpdateMainShaderValues(boolValues["RageMode"]);
+
+            foreach (var item in gameObjectsControllers)
             {
-                InputsController.InvokeLMBClick(this, EventArgs.Empty);
-            }
-            if (MouseState.IsButtonPressed(MouseButton.Button2))
-            {
-                boolValues["RageMode"] = true;
-            }
-            if (MouseState.IsButtonReleased(MouseButton.Button2))
-            {
-                boolValues["RageMode"] = false;
+                item.Update();
             }
         }
 
+        void Init()
+        {
+            mainShader = ShaderProgram.PerspectiveUniform;
+            InitShaderUniforms(mainShader);
+
+            gameObjectsControllers.Add(
+                new(mainShader, Figure.TestCube2.ToGameObject(BufferUsageHint.StreamDraw))
+            );
+
+            stateSystem = new StateSystem(3);
+        }
+        #endregion
+
+        #region Necessary logic function
         void InitShaderUniforms(ShaderProgram shaderProgram)
         {
             shaderProgram.SetUniform(
@@ -143,6 +148,22 @@ namespace Console_Project
                 )
             );
             shaderProgram.SetUniform("iScale", (Matrix4.Identity, ActiveUniformType.FloatMat4));
+        }
+
+        void CheckInputs()
+        {
+            if (MouseState.IsButtonPressed(MouseButton.Button1))
+            {
+                InputsController.InvokeLMBClick(this, EventArgs.Empty);
+            }
+            if (MouseState.IsButtonPressed(MouseButton.Button2))
+            {
+                boolValues["RageMode"] = true;
+            }
+            if (MouseState.IsButtonReleased(MouseButton.Button2))
+            {
+                boolValues["RageMode"] = false;
+            }
         }
 
         void UpdateMainShaderValues(bool isRageMode = false)
@@ -206,5 +227,6 @@ namespace Console_Project
                 timer.Restart();
             }
         }
+        #endregion
     }
 }
