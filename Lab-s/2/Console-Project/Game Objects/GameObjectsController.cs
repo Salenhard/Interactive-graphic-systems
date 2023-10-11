@@ -4,27 +4,26 @@ namespace Console_Project
 {
     class GameObjectsController
     {
-        public List<GameObject> GameObjects = new();
+        public List<(
+            GameObject GameObject,
+            Dictionary<
+                string,
+                (dynamic UniformValue, ActiveUniformType UniformType)
+            > ShaderUniformValuesInfos
+        )> GameObjectsAndTheirShaderUniformsValues = new();
         public readonly ShaderProgram ShaderProgram;
-
-        public GameObjectsController(params GameObject[] gameObjects)
-        {
-            foreach (var gameObject in gameObjects)
-            {
-                GameObjects.Add(gameObject);
-            }
-
-            ShaderProgram = ShaderProgram.Default;
-        }
 
         public GameObjectsController(
             ShaderProgram shaderProgramHandler,
-            params GameObject[] gameObjects
+            params (
+                GameObject GameObject,
+                Dictionary<string, (dynamic UniformValue, ActiveUniformType UniformType)>
+            )[] gameObjectsAndTheirShaderUniformsValues
         )
         {
-            foreach (var gameObject in gameObjects)
+            foreach (var item in gameObjectsAndTheirShaderUniformsValues)
             {
-                GameObjects.Add(gameObject);
+                GameObjectsAndTheirShaderUniformsValues.Add(item);
             }
 
             ShaderProgram = shaderProgramHandler;
@@ -39,9 +38,17 @@ namespace Console_Project
         {
             GL.UseProgram(ShaderProgram.ShaderProgramHandler);
 
-            foreach (var gameObject in GameObjects)
+            foreach (var gameObjectInfo in GameObjectsAndTheirShaderUniformsValues)
             {
-                gameObject.Draw();
+                foreach (var shaderUniformValuesInfo in gameObjectInfo.ShaderUniformValuesInfos)
+                {
+                    ShaderProgram.SetUniform(
+                        shaderUniformValuesInfo.Key,
+                        shaderUniformValuesInfo.Value
+                    );
+                }
+
+                gameObjectInfo.GameObject.Draw();
             }
         }
 
@@ -52,10 +59,12 @@ namespace Console_Project
 
         public void Dispose()
         {
-            foreach (var gameObject in GameObjects)
+            foreach (var gameObjectInfo in GameObjectsAndTheirShaderUniformsValues)
             {
-                gameObject.Dispose();
+                gameObjectInfo.GameObject.Dispose();
             }
+
+            ShaderProgram.Dispose();
         }
     }
 }
