@@ -26,6 +26,7 @@ namespace Console_Project
         in vec3 {VertexAttribute.Position.Name};
 
         uniform mat4 iMVP;
+        uniform mat4 iTranslation;
         uniform mat4 iRotationX;
         uniform mat4 iRotationY;
         uniform mat4 iRotationZ;
@@ -34,6 +35,7 @@ namespace Console_Project
         void main(void)
         {{
             gl_Position = vec4({VertexAttribute.Position.Name}, 1.0) 
+                * iTranslation
                 * iRotationX
                 * iRotationY
                 * iRotationZ
@@ -108,14 +110,24 @@ namespace Console_Project
 
         out vec4 fragColor;
 
+        uniform bool iIsUsingInputColor;
+        uniform vec3 iColor;
         uniform vec2 iResolution;
         uniform float iTime;
 
         void main(void)
         {{
-            vec2 uv = gl_FragCoord.xy / iResolution.xy;
-
-            vec3 col = 0.5 + 0.5 * cos(iTime + uv.xyx + vec3(0,2,4));
+            vec3 col;
+    
+            if (iIsUsingInputColor)
+            {{
+                col = iColor;
+            }}
+            else
+            {{
+                vec2 uv = gl_FragCoord.xy / iResolution.xy;
+                col = 0.5 + 0.5 * cos(iTime + uv.xyx + vec3(0,2,4));
+            }}
 
             fragColor = vec4(col, 1.0);
         }}
@@ -134,32 +146,18 @@ namespace Console_Project
         }}
         ";
 
-        public static string UniformHoverFragmentShader =>
+        public static string GetSimpleColoredFragmentShader(Vector4 color) =>
             $@"
         #version 420
 
         out vec4 fragColor;
 
-        uniform vec3 iColor;
-        uniform vec3 iHoverColor;
-        uniform vec2 iMouseCoordinates;
-        uniform vec2 iLeftTopHoverCoord;
-        uniform vec2 iRightBottomHoverCoord;
-
         void main(void)
-        {{       
-            vec3 color = iColor;
-
-            if (
-                iMouseCoordinates.x >= iLeftTopHoverCoord.x 
-                && iMouseCoordinates.x <= iRightBottomHoverCoord.x
-                && iMouseCoordinates.y >= iLeftTopHoverCoord.y 
-                && iMouseCoordinates.y <= iRightBottomHoverCoord.y)
-            {{
-                color = iHoverColor;
-            }}
-
-            fragColor = (color, 1.0);
+        {{
+            fragColor = vec4({color.X.ToFormattedString()}, 
+                {color.Y.ToFormattedString()}, 
+                {color.Z.ToFormattedString()}, 
+                {color.W.ToFormattedString()});
         }}
         ";
     }
