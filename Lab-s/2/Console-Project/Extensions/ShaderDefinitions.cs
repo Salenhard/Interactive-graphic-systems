@@ -110,7 +110,7 @@ namespace Console_Project
 
         out vec4 fragColor;
 
-        uniform bool iIsUsingInputColor;
+        uniform int iIsUsingInputColor;
         uniform vec3 iColor;
         uniform vec2 iResolution;
         uniform float iTime;
@@ -119,7 +119,7 @@ namespace Console_Project
         {{
             vec3 col;
     
-            if (iIsUsingInputColor)
+            if (iIsUsingInputColor == 1)
             {{
                 col = iColor;
             }}
