@@ -81,11 +81,7 @@ namespace Console_Project
             }
         }
 
-        public void SetUniform(
-            string name,
-            (dynamic value, ActiveUniformType type) valueInfo,
-            bool isReplacedPreviusValue = false
-        )
+        public void SetUniform(string name, (dynamic value, ActiveUniformType type) valueInfo)
         {
             if (ShaderUniforms.Length < 1)
             {
@@ -102,25 +98,29 @@ namespace Console_Project
 
             switch (type)
             {
-                case ActiveUniformType.FloatVec3:
-                    var v3 = (Vector3)value;
-                    GL.Uniform3(location, ref v3);
-                    break;
-                case ActiveUniformType.FloatMat4:
-                    var mat4 = (Matrix4)value;
-                    GL.UniformMatrix4(location, true, ref mat4);
-                    break;
-                case ActiveUniformType.FloatVec2:
-                    var v2 = (Vector2)value;
-                    GL.Uniform2(location, ref v2);
+                case ActiveUniformType.Int:
+                    var i = (int)value;
+                    GL.Uniform1(location, i);
                     break;
                 case ActiveUniformType.Float:
                     var f = (float)value;
                     GL.Uniform1(location, f);
                     break;
+                case ActiveUniformType.FloatVec2:
+                    var v2 = (Vector2)value;
+                    GL.Uniform2(location, ref v2);
+                    break;
+                case ActiveUniformType.FloatVec3:
+                    var v3 = (Vector3)value;
+                    GL.Uniform3(location, ref v3);
+                    break;
                 case ActiveUniformType.FloatVec4:
                     var v4 = (Vector4)value;
                     GL.Uniform4(location, ref v4);
+                    break;
+                case ActiveUniformType.FloatMat4:
+                    var mat4 = (Matrix4)value;
+                    GL.UniformMatrix4(location, true, ref mat4);
                     break;
                 default:
                     throw new NotImplementedException(
@@ -132,7 +132,7 @@ namespace Console_Project
             {
                 ShaderUniformValues.Add(name, valueInfo);
             }
-            else if (isReplacedPreviusValue)
+            else
             {
                 ShaderUniformValues[name] = valueInfo;
             }
@@ -179,11 +179,15 @@ namespace Console_Project
                 ShaderDefinitions.FragmentShaderDefault
             );
 
-        public static ShaderProgram PerspectiveUniform =>
+        public static ShaderProgram OurGameUniformShader =>
             new(ShaderDefinitions.UniformVertexShader, ShaderDefinitions.UniformFragmentShader);
-        public static ShaderProgram Colorable =>
-            new(ShaderDefinitions.VertexShaderDefault, ShaderDefinitions.UniformColorableFragmentShader);
-        
+
+        public static ShaderProgram GetSimpleColoredShader(Vector4 color) =>
+            new(
+                ShaderDefinitions.VertexShaderDefault,
+                ShaderDefinitions.GetSimpleColoredFragmentShader(color)
+            );
+
         public static ShaderUniform[] GetUniformArray(int shaderProgramHandler)
         {
             GL.GetProgram(
