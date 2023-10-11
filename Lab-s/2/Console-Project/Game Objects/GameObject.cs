@@ -5,7 +5,7 @@ namespace Console_Project
 {
     public class GameObject
     {
-        Figure Figure;
+        readonly Figure Figure;
         int VertexBufferHandler,
             VertexArrayHandler,
             ElementBufferHandler;
