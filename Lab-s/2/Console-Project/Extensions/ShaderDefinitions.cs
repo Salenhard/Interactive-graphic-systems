@@ -9,13 +9,13 @@ namespace Console_Project
             $@"
         #version 420
 
-        in vec3 {VertexAttribute.Position.Name};
+        in vec3 {VertexAttributes.Position.Name};
 
         mat4 MVP = mat4({MVP.ToFormattedString()});
 
         void main(void)
         {{
-            gl_Position = vec4({VertexAttribute.Position.Name}, 1.0) * MVP;
+            gl_Position = vec4({VertexAttributes.Position.Name}, 1.0) * MVP;
         }}
         ";
 
@@ -23,7 +23,8 @@ namespace Console_Project
             $@"
         #version 420
 
-        in vec3 {VertexAttribute.Position.Name};
+        layout (location = {VertexAttributes .Position .Index}) in vec3 {VertexAttributes.Position.Name};
+        layout (location = {VertexAttributes .TexCoord .Index}) in vec2 {VertexAttributes.TexCoord.Name};
 
         uniform mat4 iMVP;
         uniform mat4 iTranslation;
@@ -32,9 +33,11 @@ namespace Console_Project
         uniform mat4 iRotationZ;
         uniform mat4 iScale;
 
+        out vec2 texCoord;
+
         void main(void)
         {{
-            gl_Position = vec4({VertexAttribute.Position.Name}, 1.0) 
+            gl_Position = vec4({VertexAttributes.Position.Name}, 1.0) 
                 * iTranslation
                 * iRotationX
                 * iRotationY
@@ -42,6 +45,8 @@ namespace Console_Project
                 * iScale
                 * iMVP
                 ;
+
+            vec2 texCoord = {VertexAttributes.TexCoord.Name};
         }}
         ";
 
@@ -49,11 +54,11 @@ namespace Console_Project
             $@"
         #version 420
 
-        layout (location = {VertexAttribute .Position .Index}) in vec3 {VertexAttribute.Position.Name};
+        layout (location = {VertexAttributes .Position .Index}) in vec3 {VertexAttributes.Position.Name};
 
         void main(void)
         {{
-            gl_Position = vec4({VertexAttribute.Position.Name}, 1.0);
+            gl_Position = vec4({VertexAttributes.Position.Name}, 1.0);
         }}
         ";
 
@@ -109,27 +114,38 @@ namespace Console_Project
         #version 420
 
         out vec4 fragColor;
+        in vec2 texCoord;
 
         uniform int iIsUsingInputColor;
         uniform vec3 iColor;
         uniform vec2 iResolution;
         uniform float iTime;
 
+        uniform int iIsUsingTexture;
+        uniform sampler2D texture;
+
         void main(void)
         {{
-            vec3 col;
+            vec4 col;
     
-            if (iIsUsingInputColor == 1)
+            if (iIsUsingTexture == 1)
             {{
-                col = iColor;
+                col = texture(texture, texCoord);
             }}
             else
             {{
-                vec2 uv = gl_FragCoord.xy / iResolution.xy;
-                col = 0.5 + 0.5 * cos(iTime + uv.xyx + vec3(0,2,4));
+                if (iIsUsingInputColor == 1)
+                {{
+                    col = vec4(iColor, 1.0);
+                }}
+                else
+                {{
+                    vec2 uv = gl_FragCoord.xy / iResolution.xy;
+                    col = vec4(0.5 + 0.5 * cos(iTime + uv.xyx + vec3(0,2,4)), 1.0);
+                }}
             }}
 
-            fragColor = vec4(col, 1.0);
+            fragColor = col;
         }}
         ";
 
