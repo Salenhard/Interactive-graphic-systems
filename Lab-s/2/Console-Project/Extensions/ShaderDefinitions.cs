@@ -122,7 +122,7 @@ namespace Console_Project
         uniform float iTime;
 
         uniform int iIsUsingTexture;
-        uniform sampler2D texture;
+        uniform sampler2D iTexture;
 
         void main(void)
         {{
@@ -130,7 +130,7 @@ namespace Console_Project
     
             if (iIsUsingTexture == 1)
             {{
-                col = texture(texture, texCoord);
+                col = texture(iTexture, texCoord);
             }}
             else
             {{
