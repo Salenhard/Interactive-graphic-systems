@@ -12,11 +12,12 @@ namespace Console_Project
             int VertexArrayObject,
             int ElementBufferObject
         ) GetAllHandlers(
-            this Figure figure,
+            this GameObject gameObject,
             BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw,
             int vertexStride = 3
         )
         {
+            var figure = gameObject.Figure;
             var vertices = figure.VerticesCoordinates;
             var indices = figure.Indices;
 
@@ -33,18 +34,33 @@ namespace Console_Project
             );
 
             var vao = GL.GenVertexArray();
-            // NOTE: As we use only position in vertex shader
-            var positionAttributeIndex = VertexAttribute.Position.Index;
             GL.BindVertexArray(vao);
+
+            var attr = VertexAttributes.Position;
+
+            // POSITION
+            GL.EnableVertexAttribArray(attr.Index);
             GL.VertexAttribPointer(
-                positionAttributeIndex,
-                Ver3AttributeSize,
+                attr.Index,
+                attr.ComponentCount,
                 VertexAttribPointerType.Float,
                 false,
-                vertexStride * sizeof(float),
-                VertexAttribute.Position.Offset
+                VertexPositionTexture.VertexInfo.SizeInBytes,
+                attr.Offset
             );
-            GL.EnableVertexAttribArray(positionAttributeIndex);
+
+            attr = VertexAttributes.TexCoord;
+
+            // TEXTURE COORDINATES
+            GL.EnableVertexAttribArray(attr.Index);
+            GL.VertexAttribPointer(
+                attr.Index,
+                attr.ComponentCount,
+                VertexAttribPointerType.Float,
+                false,
+                VertexPositionTexture.VertexInfo.SizeInBytes,
+                attr.Offset
+            );
 
             var ebo = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
@@ -58,8 +74,13 @@ namespace Console_Project
             return (vbo, vao, ebo);
         }
 
+        // public static GameObject ToGameObject(
+        //     this Figure figure,
+        //     BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw
+        // ) => new(figure, bufferUsageHint);
+
         public static GameObject ToGameObject(
-            this Figure figure,
+            this OpenGLFigure figure,
             BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw
         ) => new(figure, bufferUsageHint);
     };
