@@ -1,27 +1,18 @@
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 
 namespace Console_Project
 {
     public class GameObject
     {
-        readonly Figure Figure;
+        // public readonly Figure Figure;
+        public readonly OpenGLFigure Figure;
         int VertexBufferHandler,
             VertexArrayHandler,
             ElementBufferHandler;
 
         public GameObject(
-            Figure figure,
-            int shaderProgrammHandler,
-            BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw
-        )
-        {
-            Figure = figure;
-            Init(bufferUsageHint);
-        }
-
-        public GameObject(
-            Figure figure,
+            // Figure figure,
+            OpenGLFigure figure,
             BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw
         )
         {
@@ -35,8 +26,9 @@ namespace Console_Project
         /// <returns> Genarated buffer </returns>
         public void Init(BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw)
         {
-            (VertexBufferHandler, VertexArrayHandler, ElementBufferHandler) =
-                Figure.GetAllHandlers();
+            (VertexBufferHandler, VertexArrayHandler, ElementBufferHandler) = this.GetAllHandlers(
+                bufferUsageHint
+            );
         }
 
         /// <summary>
