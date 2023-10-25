@@ -13,6 +13,8 @@ namespace Console_Project
         public const int WIDTH = 800;
         public const int HEIGHT = 640;
         public const string GameTitle = "Fast clicky!";
+
+        private const string DataPath = "../../../Data/Textures/";
         #endregion
 
         #region Variables
@@ -90,12 +92,18 @@ namespace Console_Project
 
             var (w, h) = ((float)WIDTH / e.Width, (float)HEIGHT / e.Height);
 
-            var mainObject = gameObjectsController.GameObjectsAndTheirShaderUniformsValues[0];
+            foreach (var cube in gameObjectsController.GameObjectsAndTheirShaderUniformsValues)
+            {
+                cube.ShaderUniformValuesInfos["iResolution"] = (
+                    new Vector2(Size.X, Size.Y),
+                    ActiveUniformType.FloatVec2
+                );
 
-            mainObject.ShaderUniformValuesInfos["iScale"] = (
-                Matrix4.CreateScale(w, h, 1),
-                ActiveUniformType.FloatMat4
-            );
+                cube.ShaderUniformValuesInfos["iScale"] = (
+                    Matrix4.CreateScale(w, h, 1),
+                    ActiveUniformType.FloatMat4
+                );
+            }
 
             GL.Viewport(0, 0, e.Width, e.Height);
         }
@@ -124,6 +132,9 @@ namespace Console_Project
 
             var mat4Type = ActiveUniformType.FloatMat4;
             var identity = (Matrix4.Identity, mat4Type);
+            //ImageResult pauseScreen = ImageResult.FromStream(File.OpenRead(Path.Combine(DataPath, "pauseScreen.png")), ColorComponents.RedGreenBlueAlpha);
+            //ImageResult loseScreen = ImageResult.FromStream(File.OpenRead(Path.Combine(DataPath, "loseScreen.png")), ColorComponents.RedGreenBlueAlpha);
+            //ImageResult winScreen = ImageResult.FromStream(File.OpenRead(Path.Combine(DataPath, "winScreen.png")), ColorComponents.RedGreenBlueAlpha);
 
             Dictionary<
                 string,
@@ -149,7 +160,7 @@ namespace Console_Project
                         { "iIsUsingInputColor", (0, ActiveUniformType.Int) },
                         { "iTranslation", identity }
                     },
-                scoreBarUniformValues =
+                    scoreBarUniformValues =
                     new()
                     {
                         {
@@ -166,16 +177,24 @@ namespace Console_Project
             gameObjectsController = new(
                 ShaderProgram.OurGameUniformShader,
                 (
-                    OpenGLFigure.MainCube.ToGameObject(BufferUsageHint.DynamicDraw),
+                    OpenGLFigure.MainCube
+                        .ToGameObject(BufferUsageHint.StreamDraw,
+                            PrimitiveType.Lines),
                     mainObjectUniformValues
                 ),
                 (
                     OpenGLFigure
+                        .MainCube
+                        .ToGameObject(BufferUsageHint.StreamDraw),
+                    mainObjectUniformValues
+                ),
+                (
+                   OpenGLFigure
                         .CreateSquare(Vector3.Zero, 2f)
-                        .ToGameObject(BufferUsageHint.DynamicDraw),
+                        .ToGameObject(BufferUsageHint.StreamDraw),
                     scoreBarUniformValues
                 )
-            );
+                );
         }
         #endregion
 
@@ -229,7 +248,7 @@ namespace Console_Project
                 }
             }
 
-            var mainObject = gameObjectsController.GameObjectsAndTheirShaderUniformsValues[0];
+            var cube1 = gameObjectsController.GameObjectsAndTheirShaderUniformsValues[1];
 
             floatValues["RotationX"] += floatValues["RotationMediumStep"];
             floatValues["RotationYandZ"] += floatValues["RotationSlowStep"];
@@ -237,32 +256,26 @@ namespace Console_Project
             var slowRotationMatrix = Matrix4.CreateRotationY(floatValues["RotationYandZ"]);
             var mat4Type = ActiveUniformType.FloatMat4;
 
-            mainObject.ShaderUniformValuesInfos["iRotationX"] = (
-                Matrix4.CreateRotationX(floatValues["RotationX"]),
-                mat4Type
-            );
-            mainObject.ShaderUniformValuesInfos["iRotationY"] = (slowRotationMatrix, mat4Type);
-            mainObject.ShaderUniformValuesInfos["iRotationZ"] = (slowRotationMatrix, mat4Type);
+            cube1.ShaderUniformValuesInfos["iRotationX"] = (
+                    Matrix4.CreateRotationX(floatValues["RotationX"]),
+                    mat4Type
+                );
+            cube1.ShaderUniformValuesInfos["iRotationY"] = (slowRotationMatrix, mat4Type);
+            cube1.ShaderUniformValuesInfos["iRotationZ"] = (slowRotationMatrix, mat4Type);
         }
 
         void UpdateColorValues()
         {
             var seconds = (float)timer.Elapsed.TotalSeconds * (boolValues["IsRageMode"] ? 5 : 1);
 
-            var mainObject = gameObjectsController.GameObjectsAndTheirShaderUniformsValues[0];
-            var scoreBarObject = gameObjectsController.GameObjectsAndTheirShaderUniformsValues[1];
-
-            mainObject.ShaderUniformValuesInfos["iResolution"] = (
-                new Vector2(Size.X, Size.Y),
-                ActiveUniformType.FloatVec2
-            );
-
-            mainObject.ShaderUniformValuesInfos["iTime"] = (seconds, ActiveUniformType.Float);
-
-            scoreBarObject.ShaderUniformValuesInfos["iColor"] = (
-                vector3Values["ScoreBarColor"],
-                ActiveUniformType.FloatVec3
-            );
+            foreach (var item in gameObjectsController.GameObjectsAndTheirShaderUniformsValues)
+            {
+                item.ShaderUniformValuesInfos["iTime"] = (seconds, ActiveUniformType.Float);
+                item.ShaderUniformValuesInfos["iColor"] = (
+                    vector3Values["ScoreBarColor"],
+                    ActiveUniformType.FloatVec3
+                );
+            }
 
             if (seconds > 1024_000f)
             {
@@ -272,11 +285,17 @@ namespace Console_Project
 
         void UpdateScore()
         {
-            var scoreBarObject = gameObjectsController.GameObjectsAndTheirShaderUniformsValues[1];
+            var cubeInside = gameObjectsController.GameObjectsAndTheirShaderUniformsValues[1];
+            var scoreBar = gameObjectsController.GameObjectsAndTheirShaderUniformsValues[2];
 
             floatValues["Score"] -= floatValues["ScoreDecreasing"];
 
-            scoreBarObject.ShaderUniformValuesInfos["iTranslation"] = (
+            cubeInside.ShaderUniformValuesInfos["iScale"] = (
+                Matrix4.CreateScale(floatValues["Score"]),
+                ActiveUniformType.FloatMat4
+            );
+
+            scoreBar.ShaderUniformValuesInfos["iTranslation"] = (
                 Matrix4.CreateTranslation(floatValues["Score"], -1.75f, 0f),
                 ActiveUniformType.FloatMat4
             );
@@ -317,6 +336,8 @@ namespace Console_Project
             if (boolValues["IsPause"])
             {
                 timer.Stop();
+                //var pauseObject = gameObjectsController.GameObjectsAndTheirShaderUniformsValues[2];
+                //pauseObject.ShaderUniformValuesInfos["iTexture"] = 
             }
             else
             {
@@ -335,7 +356,7 @@ namespace Console_Project
                 floatValues["RotationSlowStep"] = MathExtension.BigStep;
                 floatValues["RotationMediumStep"] = MathExtension.KiloStep;
                 floatValues["ScoreDecreasing"] = MathExtension.SmallStep * 4;
-                floatValues["ScoreEncreasing"] *= 3.5f;
+                floatValues["ScoreEncreasing"] *= 4f;
                 vector3Values["ScoreBarColor"] = vector3Values["ScoreBarRageColor"];
             }
             else
@@ -343,7 +364,7 @@ namespace Console_Project
                 floatValues["RotationSlowStep"] = MathExtension.SmallStep;
                 floatValues["RotationMediumStep"] = MathExtension.MediumStep;
                 floatValues["ScoreDecreasing"] = MathExtension.SmallStep;
-                floatValues["ScoreEncreasing"] *= 1.5f;
+                floatValues["ScoreEncreasing"] *= 2f;
                 vector3Values["ScoreBarColor"] = vector3Values["ScoreBarNormalColor"];
             }
         }

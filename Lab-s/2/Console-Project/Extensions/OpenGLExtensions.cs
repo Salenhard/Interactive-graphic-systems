@@ -81,7 +81,8 @@ namespace Console_Project
 
         public static GameObject ToGameObject(
             this OpenGLFigure figure,
-            BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw
-        ) => new(figure, bufferUsageHint);
+            BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw,
+            PrimitiveType drawingType = PrimitiveType.Triangles
+        ) => new(figure, bufferUsageHint, drawingType);
     };
 }

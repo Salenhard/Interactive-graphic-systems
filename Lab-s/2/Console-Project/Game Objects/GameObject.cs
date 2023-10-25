@@ -6,6 +6,7 @@ namespace Console_Project
     {
         // public readonly Figure Figure;
         public readonly OpenGLFigure Figure;
+        public readonly PrimitiveType DrawingType;
         int VertexBufferHandler,
             VertexArrayHandler,
             ElementBufferHandler;
@@ -13,10 +14,12 @@ namespace Console_Project
         public GameObject(
             // Figure figure,
             OpenGLFigure figure,
-            BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw
+            BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw,
+            PrimitiveType drawingType = PrimitiveType.Triangles
         )
         {
             Figure = figure;
+            DrawingType = drawingType;
             Init(bufferUsageHint);
         }
 
@@ -38,7 +41,7 @@ namespace Console_Project
         {
             GL.BindVertexArray(VertexArrayHandler);
             GL.DrawElements(
-                PrimitiveType.Triangles,
+                DrawingType,
                 Figure.Indices.Length,
                 DrawElementsType.UnsignedInt,
                 0
