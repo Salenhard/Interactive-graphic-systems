@@ -1,0 +1,101 @@
+[gd_scene load_steps=6 format=3 uid="uid://dm3s44oa8xtl3"]
+
+[ext_resource type="Script" path="res://BGRotation.gd" id="1_ljxij"]
+[ext_resource type="Texture2D" uid="uid://c765ihd06a2wm" path="res://gameBG.png" id="1_obpbs"]
+[ext_resource type="Script" path="res://main_menu.gd" id="1_xcxe4"]
+
+[sub_resource type="Gradient" id="Gradient_glx58"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_3scoe"]
+gradient = SubResource("Gradient_glx58")
+width = 320
+height = 360
+fill_from = Vector2(0.357798, 0.188073)
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xcxe4")
+
+[node name="PB" type="ParallaxBackground" parent="."]
+script = ExtResource("1_ljxij")
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="PB"]
+position = Vector2(-200, -200)
+motion_mirroring = Vector2(1920, 1080)
+
+[node name="TextureRect" type="TextureRect" parent="PB/ParallaxLayer"]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_obpbs")
+
+[node name="Menu UI" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="CenterContainer" type="CenterContainer" parent="Menu UI"]
+layout_mode = 2
+
+[node name="Menu UI" type="HBoxContainer" parent="Menu UI/CenterContainer"]
+layout_mode = 2
+
+[node name="Buttons" type="MarginContainer" parent="Menu UI/CenterContainer/Menu UI"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 320
+theme_override_constants/margin_bottom = 20
+
+[node name="CenterContainer" type="CenterContainer" parent="Menu UI/CenterContainer/Menu UI/Buttons"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu UI/CenterContainer/Menu UI/Buttons/CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Play" type="Button" parent="Menu UI/CenterContainer/Menu UI/Buttons/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Start"
+
+[node name="GameRules" type="Button" parent="Menu UI/CenterContainer/Menu UI/Buttons/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Game rules"
+
+[node name="Options" type="Button" parent="Menu UI/CenterContainer/Menu UI/Buttons/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Options"
+
+[node name="Exit" type="Button" parent="Menu UI/CenterContainer/Menu UI/Buttons/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Exit"
+
+[node name="Figure" type="MarginContainer" parent="Menu UI/CenterContainer/Menu UI"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="CenterContainer" type="CenterContainer" parent="Menu UI/CenterContainer/Menu UI/Figure"]
+layout_mode = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Menu UI/CenterContainer/Menu UI/Figure/CenterContainer"]
+texture = SubResource("GradientTexture2D_3scoe")
+
+[connection signal="pressed" from="Menu UI/CenterContainer/Menu UI/Buttons/CenterContainer/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
