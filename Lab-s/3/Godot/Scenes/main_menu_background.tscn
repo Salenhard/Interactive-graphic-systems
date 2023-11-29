@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://deqpkf0dhlqqk"]
+
+[ext_resource type="Script" path="res://Scripts/ParallaxBackground.gd" id="1_gnbvt"]
+[ext_resource type="Texture2D" uid="uid://c765ihd06a2wm" path="res://Assets/Images/gameBG.png" id="2_l4818"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+script = ExtResource("1_gnbvt")
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2(1920, 1080)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+position = Vector2(640, 352)
+texture = ExtResource("2_l4818")

@@ -1,0 +1,44 @@
+[gd_scene load_steps=4 format=3 uid="uid://bmxwwdsobe7ct"]
+
+[ext_resource type="PackedScene" uid="uid://do154vvdco7v8" path="res://Scenes/main_menu_cube.tscn" id="1_nvb65"]
+[ext_resource type="PackedScene" uid="uid://cdg2iga20fysn" path="res://Scenes/main_menu_ui.tscn" id="2_fiuoe"]
+[ext_resource type="PackedScene" uid="uid://deqpkf0dhlqqk" path="res://Scenes/main_menu_background.tscn" id="3_ls1sh"]
+
+[node name="Main menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" parent="." instance=ExtResource("3_ls1sh")]
+layout_mode = 1
+
+[node name="Cube" type="Node3D" parent="."]
+
+[node name="Cube scene" parent="Cube" instance=ExtResource("1_nvb65")]
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Cube"]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -512.0
+offset_top = -256.0
+offset_bottom = 256.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="Cube/SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="Cube/SubViewportContainer/SubViewport"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -0.5)
+fov = 55.0
+
+[node name="Main menu - UI" parent="." instance=ExtResource("2_fiuoe")]
+layout_mode = 1
