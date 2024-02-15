@@ -8,7 +8,9 @@
 
 # 3D objects extra files
 *.dae
-*.dae.import
+
+# Godot import files
+*.import
 
 # User-specific files
 *.rsuser
