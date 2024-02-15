@@ -1,0 +1,123 @@
+[gd_scene load_steps=3 format=3 uid="uid://c2rmfoyyapp3g"]
+
+[ext_resource type="Script" path="res://Scripts/settings.gd" id="1_3etsm"]
+[ext_resource type="PackedScene" uid="uid://deqpkf0dhlqqk" path="res://Scenes/main_menu_background.tscn" id="1_sdnyl"]
+
+[node name="Root" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3etsm")
+
+[node name="BG" parent="." instance=ExtResource("1_sdnyl")]
+layout_mode = 1
+
+[node name="UI frame" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="Elements vbox" type="VBoxContainer" parent="UI frame"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="UI frame/Elements vbox"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Настройки"
+uppercase = true
+
+[node name="Settings changing" type="HBoxContainer" parent="UI frame/Elements vbox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_constants/separation = 20
+
+[node name="Settings names" type="VBoxContainer" parent="UI frame/Elements vbox/Settings changing"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
+
+[node name="Fullscreen" type="Label" parent="UI frame/Elements vbox/Settings changing/Settings names"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 5
+text = "Полный экран"
+
+[node name="Music volume" type="Label" parent="UI frame/Elements vbox/Settings changing/Settings names"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 5
+text = "Громкость музыки"
+
+[node name="Sounds volume" type="Label" parent="UI frame/Elements vbox/Settings changing/Settings names"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 5
+text = "Громкость эффектов"
+
+[node name="Settings changing controls" type="VBoxContainer" parent="UI frame/Elements vbox/Settings changing"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
+
+[node name="Fulscreen" type="HBoxContainer" parent="UI frame/Elements vbox/Settings changing/Settings changing controls"]
+layout_mode = 2
+
+[node name="To fullscreen button" type="CheckButton" parent="UI frame/Elements vbox/Settings changing/Settings changing controls/Fulscreen"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Is fullscreen label" type="Label" parent="UI frame/Elements vbox/Settings changing/Settings changing controls/Fulscreen"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "\"значение\""
+
+[node name="Music volume" type="HBoxContainer" parent="UI frame/Elements vbox/Settings changing/Settings changing controls"]
+visible = false
+layout_mode = 2
+
+[node name="Music volume slider" type="HSlider" parent="UI frame/Elements vbox/Settings changing/Settings changing controls/Music volume"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Value" type="Label" parent="UI frame/Elements vbox/Settings changing/Settings changing controls/Music volume"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "\"значение\""
+
+[node name="Effects volume" type="HBoxContainer" parent="UI frame/Elements vbox/Settings changing/Settings changing controls"]
+visible = false
+layout_mode = 2
+
+[node name="Effects volume slider" type="HSlider" parent="UI frame/Elements vbox/Settings changing/Settings changing controls/Effects volume"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Value2" type="Label" parent="UI frame/Elements vbox/Settings changing/Settings changing controls/Effects volume"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "\"значение\""
+
+[node name="Return button" type="Button" parent="UI frame/Elements vbox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Вернуться в меню"
+
+[connection signal="toggled" from="UI frame/Elements vbox/Settings changing/Settings changing controls/Fulscreen/To fullscreen button" to="." method="_on_to_fullscreen_button_toggled"]
+[connection signal="pressed" from="UI frame/Elements vbox/Return button" to="." method="_on_return_button_pressed"]
