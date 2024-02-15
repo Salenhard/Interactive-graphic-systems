@@ -1,0 +1,58 @@
+[gd_scene load_steps=4 format=3 uid="uid://c6ds0421qxlq4"]
+
+[ext_resource type="Script" path="res://Scripts/titles.gd" id="1_gayr4"]
+[ext_resource type="PackedScene" uid="uid://ngl3cw1ehyxu" path="res://Scenes/dropings.tscn" id="2_08a45"]
+
+[sub_resource type="Curve3D" id="Curve3D_knre4"]
+
+[node name="ModelsDroping" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gayr4")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="MarginContainer/VBoxContainer/SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1240, 633)
+render_target_update_mode = 4
+
+[node name="DroppingScene" parent="MarginContainer/VBoxContainer/SubViewportContainer/SubViewport" instance=ExtResource("2_08a45")]
+
+[node name="SpawnPath" type="Path3D" parent="MarginContainer/VBoxContainer/SubViewportContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.38038, 0)
+curve = SubResource("Curve3D_knre4")
+
+[node name="SpawnLocation" type="PathFollow3D" parent="MarginContainer/VBoxContainer/SubViewportContainer/SubViewport/SpawnPath"]
+
+[node name="Return" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Вернуться в меню"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Return" to="." method="_on_return_pressed"]
