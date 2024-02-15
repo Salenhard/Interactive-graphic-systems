@@ -31,21 +31,25 @@ theme_override_constants/separation = 10
 
 [node name="Play" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Start"
+text = "Начать игру"
 
 [node name="Game rules" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Game rules"
+text = "Правила игры"
 
-[node name="Models" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="Settings" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Models
-"
+text = "Настройки"
+
+[node name="Autors" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Титры"
 
 [node name="Exit" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Exit"
+text = "Выйти из игры"
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Game rules" to="." method="_on_game_rules_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Models" to="." method="_on_models_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Autors" to="." method="_on_titles_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
