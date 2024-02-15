@@ -3,6 +3,13 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Blender extra files
+*.blend1
+
+# 3D objects extra files
+*.dae
+*.dae.import
+
 # User-specific files
 *.rsuser
 *.suo
