@@ -88,33 +88,32 @@ theme_override_constants/separation = 32
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 56
-text = "Rules"
+text = "Правила"
 horizontal_alignment = 1
 uppercase = true
 
 [node name="RulesText" type="Label" parent="MarginContainer/VBoxContainer/Panel/Text"]
 layout_mode = 2
-size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 28
-text = "The player must find all pairs before time runs out or all hearts run out."
+text = "Игрок должен найти все пары до того, как кончится время или здоровье."
+autowrap_mode = 3
 
 [node name="ExtraInfoTitle" type="Label" parent="MarginContainer/VBoxContainer/Panel/Text"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "extra info"
+text = "Дополнительно"
 horizontal_alignment = 1
 uppercase = true
 
 [node name="ExtraInfoText" type="Label" parent="MarginContainer/VBoxContainer/Panel/Text"]
 layout_mode = 2
-size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 28
-text = "The player can configure game difficulty by changing pairs amount, timer value
-and hearts amount."
+text = "Игрок может изменять сложность игры посредством изменения количества пар, времени на партию и количество очков здоровья."
+autowrap_mode = 3
 
 [node name="Back" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Return to menu"
+text = "Вернуться в меню"
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Back" to="." method="_on_back_pressed"]
