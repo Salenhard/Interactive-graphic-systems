@@ -6,9 +6,6 @@
 # Blender extra files
 *.blend1
 
-# 3D objects extra files
-*.dae
-
 # Godot import files
 *.import
 
