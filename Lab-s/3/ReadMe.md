@@ -2,7 +2,7 @@
 ## [GDScript шпаргалка (eng)](https://godot.community/topic/78/gdscript-cheatsheet)
 ## Road map
 - ### Игровые материалы [~]
-  - Модели (*.blend & *.glb  (gltf)) [~]
+  - Модели (*.blend & *.glb (gltf)) [~]
     - Карточка [O]
     - Мороженное [O]
     - Пирамидка [O]
