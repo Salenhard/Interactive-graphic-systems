@@ -1,0 +1,109 @@
+[gd_scene load_steps=2 format=3 uid="uid://cgepd0rf3ha65"]
+
+[ext_resource type="PackedScene" uid="uid://deqpkf0dhlqqk" path="res://Scenes/main_menu_background.tscn" id="1_yo8da"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" parent="." instance=ExtResource("1_yo8da")]
+layout_mode = 1
+
+[node name="UI frame" type="MarginContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="Elements vbox" type="VBoxContainer" parent="Control/UI frame"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Control/UI frame/Elements vbox"]
+layout_mode = 2
+text = "Настройки"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/UI frame/Elements vbox"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="Control/UI frame/Elements vbox/HBoxContainer"]
+layout_mode = 2
+text = "Настройка1"
+
+[node name="CheckButton" type="SpinBox" parent="Control/UI frame/Elements vbox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label2" type="Label" parent="Control/UI frame/Elements vbox/HBoxContainer"]
+layout_mode = 2
+text = "состояние"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Control/UI frame/Elements vbox"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="Control/UI frame/Elements vbox/HBoxContainer2"]
+layout_mode = 2
+text = "Настройка2"
+
+[node name="CheckButton2" type="SpinBox" parent="Control/UI frame/Elements vbox/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label2" type="Label" parent="Control/UI frame/Elements vbox/HBoxContainer2"]
+layout_mode = 2
+text = "состояние"
+
+[node name="CompleteBox" type="VBoxContainer" parent="Control/UI frame/Elements vbox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme_override_constants/separation = 30
+
+[node name="Problem" type="Label" parent="Control/UI frame/Elements vbox/CompleteBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+text = "сообщене об ошибке"
+
+[node name="ButtonBox" type="HBoxContainer" parent="Control/UI frame/Elements vbox/CompleteBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme_override_constants/separation = 100
+
+[node name="Complete" type="Button" parent="Control/UI frame/Elements vbox/CompleteBox/ButtonBox"]
+custom_minimum_size = Vector2(250, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+text = "Применить"
+
+[node name="Reset" type="Button" parent="Control/UI frame/Elements vbox/CompleteBox/ButtonBox"]
+custom_minimum_size = Vector2(250, 50)
+layout_mode = 2
+text = "Настройки по умолчанию"
+
+[node name="Return" type="Button" parent="Control/UI frame/Elements vbox/CompleteBox/ButtonBox"]
+custom_minimum_size = Vector2(250, 50)
+layout_mode = 2
+text = "Вернуться"
