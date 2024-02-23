@@ -1,44 +1,41 @@
-[gd_scene load_steps=5 format=3 uid="uid://2q3chmsvnrbv"]
+[gd_scene load_steps=4 format=3 uid="uid://2q3chmsvnrbv"]
 
 [ext_resource type="Script" path="res://Scripts/model_3000.gd" id="1_8p5ls"]
 
-[sub_resource type="GDScript" id="GDScript_u4wcg"]
-script/source = "extends Node
+[sub_resource type="BoxMesh" id="BoxMesh_uqnhp"]
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass
-"
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_6umgt"]
-
-[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ppr1l"]
-points = PackedVector3Array(-1, 0, -1, -1, 0, 1, 1, 0, -1, 1, 0, 1)
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_cahjr"]
+points = PackedVector3Array(0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5)
 
 [node name="Root" type="Node"]
-script = SubResource("GDScript_u4wcg")
 
 [node name="3D" type="Node3D" parent="."]
 
 [node name="Camera3D" type="Camera3D" parent="3D"]
-transform = Transform3D(1, 0, 0, 0, 0.906308, 0.422618, 0, -0.422618, 0.906308, 0, 1, 2)
+transform = Transform3D(1, 0, 0, 0, 0.996195, 0.0871557, 0, -0.0871557, 0.996195, 0, 0.1, 2)
 current = true
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="3D"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1, 0)
+transform = Transform3D(0.707107, -3.09086e-08, 0.707107, -0.707107, -3.09086e-08, 0.707107, 0, -1, -4.37114e-08, 3, 4, 0)
+light_energy = 2.0
 directional_shadow_mode = 0
 directional_shadow_max_distance = 10000.0
 sky_mode = 1
 
 [node name="Model3000" type="RigidBody3D" parent="3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+input_ray_pickable = false
 script = ExtResource("1_8p5ls")
 model_path = "res://Assets/Models/card/card.glb"
+models_scale = Vector3(0.1, 0.1, 0.1)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="3D"]
+transform = Transform3D(1, 0, 0, 0, 0.999848, -0.0174524, 0, 0.0174524, 0.999848, 0, -0.119987, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="3D/StaticBody3D"]
-mesh = SubResource("PlaneMesh_6umgt")
+transform = Transform3D(1, 0, 0, 0, 0.1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_uqnhp")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="3D/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_ppr1l")
+transform = Transform3D(1, 0, 0, 0, 0.1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("ConvexPolygonShape3D_cahjr")
