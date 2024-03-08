@@ -1,8 +1,37 @@
-[gd_scene load_steps=4 format=3 uid="uid://bmxwwdsobe7ct"]
+[gd_scene load_steps=9 format=3 uid="uid://bmxwwdsobe7ct"]
 
-[ext_resource type="PackedScene" uid="uid://do154vvdco7v8" path="res://Scenes/main_menu_cube.tscn" id="1_nvb65"]
 [ext_resource type="PackedScene" uid="uid://cdg2iga20fysn" path="res://Scenes/main_menu_ui.tscn" id="2_fiuoe"]
+[ext_resource type="Shader" path="res://Assets/Shaders/cube_rainbow.gdshader" id="2_n1i6b"]
+[ext_resource type="Script" path="res://Scripts/cube_animation.gd" id="3_bcn5b"]
 [ext_resource type="PackedScene" uid="uid://deqpkf0dhlqqk" path="res://Scenes/main_menu_background.tscn" id="3_ls1sh"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f15in"]
+render_priority = 0
+shader = ExtResource("2_n1i6b")
+
+[sub_resource type="BoxMesh" id="BoxMesh_dqiih"]
+
+[sub_resource type="Animation" id="Animation_8aa67"]
+resource_name = "cube_rotation"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(12.5664, 6.28319, 3.14159)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_r7vks"]
+_data = {
+"cube_rotation": SubResource("Animation_8aa67")
+}
 
 [node name="Main menu" type="Control"]
 layout_mode = 3
@@ -16,8 +45,6 @@ grow_vertical = 2
 layout_mode = 1
 
 [node name="Cube" type="Node3D" parent="."]
-
-[node name="Cube scene" parent="Cube" instance=ExtResource("1_nvb65")]
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="Cube"]
 anchors_preset = 6
@@ -39,6 +66,21 @@ render_target_update_mode = 4
 [node name="Camera3D" type="Camera3D" parent="Cube/SubViewportContainer/SubViewport"]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -0.5)
 fov = 55.0
+
+[node name="Sun" type="DirectionalLight3D" parent="Cube/SubViewportContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 0, -0.300143)
+
+[node name="Cube" type="MeshInstance3D" parent="Cube/SubViewportContainer/SubViewport"]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+material_overlay = SubResource("ShaderMaterial_f15in")
+mesh = SubResource("BoxMesh_dqiih")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Cube/SubViewportContainer/SubViewport/Cube"]
+libraries = {
+"": SubResource("AnimationLibrary_r7vks")
+}
+speed_scale = 0.13
+script = ExtResource("3_bcn5b")
 
 [node name="Main menu - UI" parent="." instance=ExtResource("2_fiuoe")]
 layout_mode = 1
