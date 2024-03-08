@@ -53,6 +53,7 @@ transform = Transform3D(1, 0, 0, 0, 0.1, 0, 0, 0, 1, 0, 0, 0)
 shape = SubResource("ConvexPolygonShape3D_cahjr")
 
 [node name="Cards" type="HBoxContainer" parent="."]
+visible = false
 size_flags_horizontal = 0
 size_flags_vertical = 0
 theme_override_constants/separation = 32
@@ -238,3 +239,4 @@ grow_vertical = 0
 size_flags_horizontal = 4
 size_flags_vertical = 8
 script = ExtResource("3_b3bey")
+card_pairs_amount = 72
