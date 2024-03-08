@@ -3,7 +3,7 @@ class_name Model3000 extends RigidBody3D
 var dispose_timer: Timer = Timer.new()
 @export_category("Model3000")
 ## model path is path from project root path
-@export var model_path: String = "res://"
+@export_file("*.gltf", "*.glb") var model_path: String = "res://"
 @export var dispose_seconds: int = 1
 @export var models_scale: Vector3 = Vector3.ONE
 
